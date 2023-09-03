@@ -17,6 +17,7 @@ sudo snap install wps-office
 sudo snap install pycharm-community --classic
 sudo snap install intellij-idea-community --classic
 sudo snap install code --classic
+sudo snap install brackets --classic
 sudo snap install flutter --classic
 sudo snap install kate --classic
 sudo snap install krita
@@ -89,7 +90,7 @@ sudo git clone https://github.com/aunetx/blur-my-shell /opt/blur-my-shell --dept
 # Install MacOS-like skin
 sudo mkdir /opt/whitesur;
 sudo git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git /opt/whitesur --depth=1
-(cd /opt/whitesur; sudo ./install.sh; sudo ./tweaks.sh -f monterey; sudo ./tweaks.sh -g -N -b "/opt/bg.jpg";)
+(cd /opt/whitesur; sudo ./install.sh -i ubuntu; sudo ./tweaks.sh -f monterey; sudo ./tweaks.sh -g -N -b "/opt/bg.jpg";)
 
 # Install MacOS-like icons
 sudo mkdir /opt/whitesur-icons;

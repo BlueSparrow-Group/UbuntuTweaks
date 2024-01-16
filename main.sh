@@ -800,7 +800,7 @@ function install-tweaks {
 
   sudo mkdir -p /var/bluesparrow/ubuntutweaks
   sudo mkdir -p /opt/bluesparrow/ubuntutweaks
-  sudo git clone https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks
+  sudo git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks
   sudo touch /etc/profile.d/custom.sh
   sudo chmod +x /etc/profile.d/custom.sh
   if [ -f "/etc/profile.d/custom.sh" ]

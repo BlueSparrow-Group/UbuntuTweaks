@@ -490,7 +490,7 @@ function schedule-update-software {
   if [ -d "/var/bluesparrow/ubuntutweaks" ]
   then
     sudo touch /etc/cron.d/bs-ubuntutweaks-updatesoftware
-    echo -e "0 0 * * 1 root bash /var/bluesparrow/ubuntutweaks/run.sh update-software" >> /etc/cron.d/bs-ubuntutweaks-updatesoftware
+    echo -e "0 0 * * 1 root bash /var/bluesparrow/ubuntutweaks/run.sh update" >> /etc/cron.d/bs-ubuntutweaks-updatesoftware
   else
     echo "Cannot schedule software weekly update due to lack of tweaks persistent installation."
   fi

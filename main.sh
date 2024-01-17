@@ -798,17 +798,26 @@ function unlock-common-settings-apps {
 function install-tweaks {
   echo -e "= Installing tweaks utility into system =\n\n"
 
+  # Install required git software
+  sudo apt install -y git
+
+  # Create base and optional directories
   sudo mkdir -p /var/bluesparrow/ubuntutweaks
   sudo mkdir -p /opt/bluesparrow/ubuntutweaks
+
+  # Clone tweaks into system
   sudo git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks
+
+  # Add tweaks into shell path
   sudo touch /etc/profile.d/custom.sh
   sudo chmod +x /etc/profile.d/custom.sh
   if [ -f "/etc/profile.d/custom.sh" ]
   then
-    sudo echo -e "\nalias bs-ubuntu-tweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh\n'" >> /etc/profile.d/custom.sh
+    sudo echo -e "\nalias bs-ubuntu-tweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\n" >> /etc/profile.d/custom.sh
   else
-    sudo echo -e "#!/bin/sh\nalias bs-ubuntu-tweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh\n'" > /etc/profile.d/custom.sh
+    sudo echo -e "#!/bin/sh\nalias bs-ubuntu-tweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\n" > /etc/profile.d/custom.sh
   fi
+  echo $"If you want to use tweaks utility without loging out and logging in again into system, you had to type \"alias bs-ubuntu-tweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\" in yout console"
 }
 
 function update-tweaks {

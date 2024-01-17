@@ -650,7 +650,7 @@ function unset-desktop-ui-settings {
   sudo dconf update
 }
 
-function set-desktop-dark-ui-settings{
+function set-desktop-dark-ui-settings {
   echo -e "= Sets desktop ui dark theme settings =\n\n"
 
   # Enable blur my shell

@@ -8,7 +8,7 @@ cd $(dirname $0)
 sudo apt update
 
 # Declare variables
-need-reboot=0
+need_reboot=0
 
 ## Software manipulation functions
 
@@ -737,7 +737,7 @@ function set-aad-settings {
 
   set-auth-nouserslist-settings
 
-  need-reboot=1
+  need_reboot=1
 }
 
 function unset-aad-settings {
@@ -748,7 +748,7 @@ function unset-aad-settings {
 
   unset-auth-nouserslist-settings
 
-  need-reboot=1
+  need_reboot=1
 }
 
 function lock-all-settings-apps {
@@ -901,10 +901,10 @@ function main-prompt {
     h | "-h" | help | "--help" ) print-help ;;
     * ) echo -e "Invalid option!\n\n"; print-help ;;
   esac
-  if [[ need-reboot -eq 1 ]]
+  if [[ need_reboot -eq 1 ]]
   then
     reboot-system
-    need-reboot=0
+    need_reboot=0
   fi
 }
 

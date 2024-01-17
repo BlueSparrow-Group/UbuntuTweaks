@@ -16,7 +16,10 @@ function install-general-software {
   echo -e "= Installing common general-use dependencies =\n\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y gettext ca-certificates curl gnupg software-properties-common apt-get-transport-https realpath unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx 1> /dev/null
+  sudo apt-get install -y gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx 1> /dev/null
+
+  # Install realpath if not found (bypass warning)
+  sudo apt-get install -y realpath &> /dev/null
 }
 
 function install-internet-software {

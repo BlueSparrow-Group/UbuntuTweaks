@@ -19,7 +19,7 @@ function install-general-software {
   sudo apt-get install -y gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx 1> /dev/null
 
   # Install realpath if not found (bypass warning)
-  sudo apt-get install -y realpath 1> /dev/null 2>/dev/null
+  sudo apt-get install -y realpath &>/dev/null
 }
 
 function install-internet-software {
@@ -937,7 +937,7 @@ function main-prompt {
     ps | purge-self ) purge-tweaks ;;
     sus | schedule-update-self ) schedule-update-self ;;
     usus | unschedule-update-self ) unchedule-update-self ;;
-    h | "-h" | help | "--help" ) print-help ;;
+    h | "-h" | help | "--help" | '' ) print-help ;;
     * ) echo -e "Invalid option!\n" >&2; print-help ;;
   esac
   if [[ need_reboot -eq 1 ]]
@@ -965,8 +965,7 @@ Available commands:
 - ps, purge-self - Removes tweaks utility from system along with all its related software and settings
 - sus, schedule-update-self - Schedules weekly tweaks utility updates
 - usus, unschedule-update-self - Unschedules weekly tweaks utility updates
-- h, -h, help, --help - Prints this help
-"
+- h, -h, help, --help - Prints this help"
 }
 
 function print-packages {
@@ -991,8 +990,7 @@ Available kits (with remote-support + ui-mods + automatic updates):
 - tkaadd[-wc], teacher-kit-aad[-without-config] - Package teacher-kit with Azure Active Directory installation
 - pkaadd[-wc], proffesional-kit-aad[-without-config] - Package proffesional-kit with Azure Active Directory installation
 
--wc, -without-config suffixes are available only in installation prompt (when removing it no matters)
-"
+-wc, -without-config suffixes are available only in installation prompt (when removing it no matters)"
 }
 
 function print-config-options {
@@ -1022,8 +1020,7 @@ function print-config-options {
 - usrdf, unset-rubik-as-defaultfont - Cancels Rubik as system default font
 - sa, set-add-settings - Applys Azure Active Directory (Entra ID) settings (from /opt/bluesparrow/ubuntutweaks/aad.conf or empty ones)
 - usa, unset-add-settings - Cancels Azure Active Directory (Entra ID) settings
-- l, list - Prints this help
-"
+- l, list - Prints this help"
 }
 
 function interactive-prompt {
@@ -1069,7 +1066,7 @@ function install-prompt {
       skaad-wc | student-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods;;
       tkaad-wc | teacher-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods;;
       pkaad-wc | proffesional-kit-aad-without-config ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-ui-mods ;;
-      l | list ) print-packages ;;
+      l | list | '' ) print-packages ;;
       * ) echo -e "Invalid option!\n" >&2; print-packages ;;
     esac
   done
@@ -1104,8 +1101,8 @@ function configure-prompt {
     usrdf | unset-rubik-as-defaultfont ) unset-rubik-as-defaultfont-settings ;;
     sa | set-add-settings ) set-add-settings ;;
     usa | unset-add-settings ) unset-add-settings ;;
-    l | list ) print-options ;;
-    * ) echo -e "Invalid option!\n" >&2; print-packages ;;
+    l | list | '' ) print-options ;;
+    * ) echo -e "Invalid option!\n" >&2; print-options ;;
   esac
 }
 
@@ -1130,7 +1127,7 @@ function remove-prompt {
       skaad | student-kit-aad ) uninstall-prompt student-kit; uninstall-prompt aad ;;
       tkaad | teacher-kit-aad ) uninstall-prompt teacher-kit; uninstall-prompt aad ;;
       pkaad | proffesional-kit-aad ) uninstall-prompt proffesional-kit; uuninstall-prompt aad ;;
-      l | list ) print-packages ;;
+      l | list | '' ) print-packages ;;
       * ) echo -e "Invalid option!\n" >&2; print-packages ;;
     esac
   done

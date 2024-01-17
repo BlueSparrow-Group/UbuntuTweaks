@@ -808,6 +808,10 @@ function install-tweaks {
   # Clone tweaks into system
   sudo git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks
 
+  # Set right scripts permissions
+  sudo chmod 755 /var/bluesparrow/ubuntutweaks/run.sh
+  sudo chmod 755 /var/bluesparrow/ubuntutweaks/main.sh
+
   # Add tweaks into shell path
   sudo touch /etc/profile.d/custom.sh
   sudo chmod +x /etc/profile.d/custom.sh
@@ -821,7 +825,12 @@ function install-tweaks {
 }
 
 function update-tweaks {
+  # Trigger download of tweaks utility updates
   sudo bash -c $'cd /var/bluesparrow/ubuntutweaks; git pull -q origin'
+
+  # Set right scripts permissions
+  sudo chmod 755 /var/bluesparrow/ubuntutweaks/run.sh
+  sudo chmod 755 /var/bluesparrow/ubuntutweaks/main.sh
 }
 
 function schedule-update-tweaks {
@@ -908,7 +917,7 @@ function main-prompt {
     sus | schedule-update-self ) schedule-update-self ;;
     usus | unschedule-update-self ) unchedule-update-self ;;
     h | "-h" | help | "--help" ) print-help ;;
-    * ) echo -e "Invalid option!\n\n"; print-help ;;
+    * ) echo -e "Invalid option!\n"; print-help ;;
   esac
   if [[ need_reboot -eq 1 ]]
   then
@@ -1040,7 +1049,7 @@ function install-prompt {
       tkaad-wc | teacher-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods;;
       pkaad-wc | proffesional-kit-aad-without-config ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-ui-mods ;;
       l | list ) print-packages ;;
-      * ) echo -e "Invalid option!\n\n"; print-packages ;;
+      * ) echo -e "Invalid option!\n"; print-packages ;;
     esac
   done
 }
@@ -1075,7 +1084,7 @@ function configure-prompt {
     sa | set-add-settings ) set-add-settings ;;
     usa | unset-add-settings ) unset-add-settings ;;
     l | list ) print-options ;;
-    * ) echo -e "Invalid option!\n\n"; print-packages ;;
+    * ) echo -e "Invalid option!\n"; print-packages ;;
   esac
 }
 
@@ -1101,12 +1110,12 @@ function remove-prompt {
       tkaad | teacher-kit-aad ) uninstall-prompt teacher-kit; uninstall-prompt aad ;;
       pkaad | proffesional-kit-aad ) uninstall-prompt proffesional-kit; uuninstall-prompt aad ;;
       l | list ) print-packages ;;
-      * ) echo -e "Invalid option!\n\n"; print-packages ;;
+      * ) echo -e "Invalid option!\n"; print-packages ;;
     esac
   done
 }
 
 
-echo -e "=== BlueSparrow UbuntuTweaks ===\n\n\n"
+echo -e "=== BlueSparrow UbuntuTweaks ===\n\n"
 main-prompt $*
-echo -e "\n\nBye!\n"
+echo -e "\n= Bye! =\n"

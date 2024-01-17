@@ -25,15 +25,9 @@ function install-general-software {
 function install-internet-software {
   echo -e "= Installing internet-software package =\n\n"
 
-  # Disable echo
-  stty -echo
-
   # Add MS Edge repository
   echo 'deb [signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main' | sudo tee /etc/apt-get/sources.list.d/microsoft-edge.list
-  sudo wget -O- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/microsoft-edge.gpg
-
-  # Re-enable echo
-  stty echo
+  sudo /bin/bash -c "wget -O- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /usr/share/keyrings/microsoft-edge.gpg" &> /dev/null
 
   # Upate software list
   sudo apt-get update 1> /dev/null
@@ -41,22 +35,13 @@ function install-internet-software {
   # Install software from added repositories
   sudo apt-get install -y microsoft-edge-stable 1> /dev/null
 
-  # Disable echo
-  stty -echo
-
   # Downloads Zoom.us
   sudo rm -R /tmp/zoom.deb
-  wget -qO - https://zoom.us/client/5.17.1.1840/zoom_amd64.deb | sudo tee /tmp/zoom.deb
-
-  # Re-enable echo
-  stty echo
+  sudo /bin/bash -c "wget -qO - https://zoom.us/client/5.17.1.1840/zoom_amd64.deb | tee /tmp/zoom.deb" &> /dev/null
 
   # Install Zoom.us
-  sudo dpkg -i /tmp/zoom.deb
+  sudo dpkg -i /tmp/zoom.deb &> /dev/null
   sudo apt-get --fix-broken install -y 1> /dev/null
-
-  # Disable echo
-  stty -echo
 
   # Install software from snap
   sudo snap install chromium 1> /dev/null
@@ -88,7 +73,7 @@ function install-office-software {
   sudo apt-get install -y libreoffice cups cups-ipp-utils hplip printer-driver-gutenprint 1> /dev/null
 
   # Add TexStudio repository
-  sudo add-apt-get-repository -y ppa:sunderme/texstudio 1> /dev/null
+  sudo add-apt-repository -y ppa:sunderme/texstudio 1> /dev/null
 
   # Upate software list
   sudo apt-get update 1> /dev/null
@@ -138,36 +123,24 @@ function install-creative-software {
   # Install software and libs from ubuntu repositories
   sudo apt-get install -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio 1> /dev/null
 
-  # Disable echo
-  stty -echo
-
   # Downloads NDI with OBS NDI addon packages
   sudo rm -R /tmp/ndi.deb
   sudo rm -R /tmp/obs-ndi.deb
-  wget -qO - https://github.com/obs-ndi/obs-ndi/releases/download/4.11.1/libndi5_5.5.3-1_amd64.deb | sudo tee /tmp/ndi.deb
-  wget -qO - https://github.com/obs-ndi/obs-ndi/releases/download/4.11.1/obs-ndi-4.11.1-linux-x86_64.deb | sudo tee /tmp/obs-ndi.deb
-
-  # Re-enable echo
-  stty echo
+  sudo /bin/bash -c "wget -qO - https://github.com/obs-ndi/obs-ndi/releases/download/4.11.1/libndi5_5.5.3-1_amd64.deb | tee /tmp/ndi.deb" &>/dev/null
+  sudo /bin/bash -c "wget -qO - https://github.com/obs-ndi/obs-ndi/releases/download/4.11.1/obs-ndi-4.11.1-linux-x86_64.deb | tee /tmp/obs-ndi.deb" &>/dev/null
 
   # Install NDI with OBS NDI addon from downloaded packages
-  sudo dpkg -i /tmp/ndi.deb 1> /dev/null
+  sudo dpkg -i /tmp/ndi.deb &> /dev/null
   sudo apt-get --fix-broken install -y 1> /dev/null
-  sudo dpkg -i /tmp/obs-ndi.deb 1> /dev/null
+  sudo dpkg -i /tmp/obs-ndi.deb &> /dev/null
   sudo apt-get --fix-broken install -y 1> /dev/null
-
-  # Disable echo
-  stty -echo
 
   # Downloads Lightworks
   sudo rm -R /tmp/lightworks.deb
-  wget -qO - https://app.lwks.com/api/auth/download/lightworks/linux_deb | sudo tee /tmp/lightworks.deb
-
-  # Re-enable echo
-  stty echo
+  sudo /bin/bash -c "wget -qO - https://app.lwks.com/api/auth/download/lightworks/linux_deb | tee /tmp/lightworks.deb" &>/dev/null
 
   # Install Lightworks from downloaded packages
-  sudo dpkg -i /tmp/lightworks.deb 1> /dev/null
+  sudo dpkg -i /tmp/lightworks.deb &> /dev/null
   sudo apt-get --fix-broken install -y 1> /dev/null
 }
 
@@ -206,30 +179,19 @@ function install-programming-software {
   # Install Julialang
   curl -fsSL https://install.julialang.org | sh -s -- -y 1> /dev/null
 
-  # Disable echo
-  stty -echo
-
   # Add Unity3D repository and download libssl1.1
-  wget -qO - https://hub.unity3d.com/linux/keys/public | sudo tee /etc/apt-get/trusted.gpg.d/unityhub.asc
-  sudo sh -c 'echo "deb https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt-get/sources.list.d/unityhub.list'
+  sudo /bin/bash -c "wget -qO - https://hub.unity3d.com/linux/keys/public | tee /etc/apt-get/trusted.gpg.d/unityhub.asc" &>/dev/null
+  sudo /bin/bash -c 'echo "deb https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt-get/sources.list.d/unityhub.list'
   rm -R /tmp/libssl11.deb
-  wget -qO - http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb | sudo tee /tmp/libssl11.deb
-
-  # Re-enable echo
-  stty echo
+  sudo /bin/bash -c "wget -qO - http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb | tee /tmp/libssl11.deb" &>/dev/null
 
   # Install libssl1.1 from downloaded packages
-  sudo dpkg -i /tmp/libssl11.deb 1> /dev/null
-
-  # Disable echo
-  stty -echo
+  sudo dpkg -i /tmp/libssl11.deb &> /dev/null
+  sudo apt-get --fix-broken install -y 1> /dev/null
 
   # Add C# IntelliSense
-  wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt-get/trusted.gpg.d/mono-official-stable.gpg
+  sudo /bin/bash -c "wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt-get/trusted.gpg.d/mono-official-stable.gpg" &>/dev/null
   echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt-get/sources.list.d/mono-official-stable.list
-
-  # Re-enable echo
-  stty echo
 
   # Upate software list
   sudo apt-get update 1> /dev/null
@@ -335,15 +297,9 @@ function uninstall-ose {
 function install-remote-support {
   echo -e "= Installing remote-support package =\n\n"
 
-  # Disable echo
-  stty -echo
-
   # Add Anydesk repository
-  wget -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY | sudo tee /etc/apt-get/trusted.gpg.d/anydesk.asc
+  sudo /bin/bash -c "wget -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY | sudo tee /etc/apt-get/trusted.gpg.d/anydesk.asc" &>/dev/null
   echo "deb http://deb.anydesk.com/ all main" > /etc/apt-get/sources.list.d/anydesk-stable.list
-
-  # Reenable echo
-  stty echo
 
   # Upate software list
   sudo apt-get update 1> /dev/null
@@ -351,18 +307,13 @@ function install-remote-support {
   # Install software from added repositories
   sudo apt-get install -y anydesk 1> /dev/null
 
-  # Disable echo
-  stty -echo
-
   # Download TeamViewer
   rm -R /tmp/teamviewer.deb
-  wget -qO - https://download.teamviewer.com/download/linux/teamviewer_amd64.deb | sudo tee /tmp/teamviewer.deb
-
-  # Reenable echo
-  stty echo
+  sudo /bin/bash -c "wget -qO - https://download.teamviewer.com/download/linux/teamviewer_amd64.deb | sudo tee /tmp/teamviewer.deb" &>/dev/null
 
   # Install TeamViewer
-  sudo dpkg -i /tmp/teamviewer.deb 1> /dev/null
+  sudo dpkg -i /tmp/teamviewer.deb &> /dev/null
+  sudo apt-get --fix-broken install -y 1> /dev/null
 }
 
 function uninstall-remote-support {

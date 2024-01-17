@@ -812,7 +812,7 @@ function install-tweaks {
 }
 
 function update-tweaks {
-  sudo sh -c $'cd /var/bluesparrow/ubuntutweaks; git pull -q origin'
+  sudo bash -c $'cd /var/bluesparrow/ubuntutweaks; git pull -q origin'
 }
 
 function schedule-update-tweaks {

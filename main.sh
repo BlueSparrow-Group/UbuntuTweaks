@@ -837,7 +837,7 @@ function install-tweaks {
   else
     sudo echo -e "#!/bin/sh\nalias bs-ubuntutweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\n" > /etc/profile.d/custom.sh
   fi
-  echo "If you want to use tweaks utility without loging out and logging in again into system, you had to type \"alias bs-ubuntu-tweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\" in yout console"
+  echo "If you want to use tweaks utility without loging out and logging in again into system, you had to type \"alias bs-ubuntutweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\" in yout console"
 }
 
 function update-tweaks {

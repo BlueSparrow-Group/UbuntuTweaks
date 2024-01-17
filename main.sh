@@ -1101,5 +1101,3 @@ function remove-prompt {
 echo -e "=== BlueSparrow UbuntuTweaks ===\n\n\n"
 main-prompt $*
 echo -e "\n\nBye!\n"
-
-reboot-system

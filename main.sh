@@ -978,7 +978,7 @@ function print-packages {
 - aad[-wc], add-auth[-without-config] - Azure Active Directory support software (with configuration from /opt/bluesparrow/ubuntutweaks/aad.conf as default)
 - ui[-wc], ui-mods[-without-config] - User interface modifications pack for gnome-desktop
 
-Available kits (with ui-mods and remote-support + ui-mods):
+Available kits (with remote-support + ui-mods + automatic updates):
 - ok, office-kit - Software kit for home and office usage (internet-software + office-software + ui-mods)
 - sk, student-kit - Software kit for student computers (internet-software + office-software + edu-software + creative-software + programming-software + ose-certyficate + remote-support + ui-mods + limitations)
 - tk, teacher-kit - Software kit for teachers computers and students home computers (internet-software + office-software + edu-software + creative-software + programming-software + ose-certyficate + remote-support + ui-mods)
@@ -1054,10 +1054,10 @@ function install-prompt {
       aad-wc | add-auth-without-config ) install-aad ;;
       ui | ui-mods ) install-ui-mods; configure-prompt set-auth-ui-mods; configure-prompt set-auth-logo; configure-prompt set-desktop-ui-mods; configure-prompt set-desktop-background; configure-prompt set-rubik-as-defaultfont ;;
       ui-wc | ui-mods-without-config ) install-ui-mods ;;
-      ok | office-kit ) install-internet-software; install-office-software; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps ;;
-      sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps ;;
-      tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps ;;
-      pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt ui-mods ;;
+      ok | office-kit ) install-internet-software; install-office-software; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-self ;;
+      sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps; schedule-update-software; schedule-update-self ;;
+      tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-self ;;
+      pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt ui-mods; schedule-update-software; schedule-update-self ;;
       okaad | office-kit-aad ) install-prompt office-kit; install-aad ;;
       skaad | student-kit-aad ) install-prompt student-kit; install-aad ;;
       tkaad | teacher-kit-aad ) install-prompt teacher-kit; install-aad ;;

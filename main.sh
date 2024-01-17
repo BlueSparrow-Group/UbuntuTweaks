@@ -841,6 +841,8 @@ function install-tweaks {
 }
 
 function update-tweaks {
+  echo -e "= Updating tweaks utility =\n\n"
+
   # Trigger download of tweaks utility updates
   sudo bash -c $'cd /var/bluesparrow/ubuntutweaks; git pull -q origin'
 

@@ -387,9 +387,9 @@ function install-ui-mods {
   sudo apt-get install -y gnome-shell-extensions dbus-x11 > /dev/null
 
   # Fix gnome-shell-extensions
-  sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
-  sudo apt-get remove -y gnome-shell-extension-prefs > /dev/null
-  sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
+  #sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
+  #sudo apt-get remove -y gnome-shell-extension-prefs > /dev/null
+  #sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
 
   # Install gnome extensions cli from pipx
   sudo /bin/bash -c "pipx install gnome-extensions-cli --system-site-packages" > /dev/null
@@ -404,7 +404,7 @@ function install-ui-mods {
 
   # Install MacOS-like skin
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; sudo ./install.sh -i ubuntu; sudo ./tweaks.sh -f monterey; sudo ./tweaks.sh -g -N -b '$(get-custom-auth-background)'" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i ubuntu; ./tweaks.sh -f monterey; ./tweaks.sh -g -N -b '$(get-custom-auth-background)'" > /dev/null
 
   # Install MacOS-like icons
   sudo mkdir whitesur-icons;
@@ -674,8 +674,8 @@ function set-rubik-as-defaultfont-settings {
   echo -e "\n= Sets Rubik as default desktop font =\n"
 
   # Change and lock Gnome desktop settings
-  sudo sh -c $'echo "[org/gnome/desktop/interface]\n\nfont-name=\'Rubik 11\'\ntitlebar-font=\'Rubik Bold 11\'\nmonospace-font-name=\'Rubik Mono One 13\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont'
-  sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/desktop/interface/font-name\norg/gnome/desktop/interface/titlebar-font\norg/gnome/desktop/interface/monospace-font-name\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop'
+  sudo sh -c $'echo "[org/gnome/desktop/interface]\n\nfont-name=\'Rubik 11\'\ntitlebar-font=\'Rubik Bold 11\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont'
+  sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/desktop/interface/font-name\norg/gnome/desktop/interface/titlebar-font\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop'
   sudo dconf update > /dev/null
 }
 

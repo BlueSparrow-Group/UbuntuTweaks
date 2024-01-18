@@ -5,10 +5,11 @@
 cd $(dirname $0)
 
 # Upate software list
-sudo apt-get update 1> /dev/null
+sudo apt-get update > /dev/null
 
 # Declare variables
 need_reboot=0
+DEBIAN_FRONTEND=noninteractive
 
 ## Software manipulation functions
 
@@ -16,7 +17,7 @@ function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx 1> /dev/null
+  sudo apt-get install -y gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx > /dev/null
 
   # Install realpath if not found (bypass warning)
   sudo apt-get install -y realpath &>/dev/null
@@ -30,10 +31,10 @@ function install-internet-software {
   sudo /bin/bash -c "wget -O- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /usr/share/keyrings/microsoft-edge.gpg" &> /dev/null
 
   # Upate software list
-  sudo apt-get update 1> /dev/null
+  sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -y microsoft-edge-stable 1> /dev/null
+  sudo apt-get install -y microsoft-edge-stable > /dev/null
 
   # Downloads Zoom.us
   sudo rm /tmp/zoom.deb &> /dev/null
@@ -41,12 +42,12 @@ function install-internet-software {
 
   # Install Zoom.us
   sudo dpkg -i /tmp/zoom.deb &> /dev/null
-  sudo apt-get --fix-broken install -y 1> /dev/null
+  sudo apt-get --fix-broken install -y > /dev/null
 
   # Install software from snap
-  sudo snap install chromium 1> /dev/null
-  sudo snap install spotify 1> /dev/null
-  sudo snap install discord 1> /dev/null
+  sudo snap install chromium > /dev/null
+  sudo snap install spotify > /dev/null
+  sudo snap install discord > /dev/null
 }
 
 function uninstall-internet-software {
@@ -56,72 +57,72 @@ function uninstall-internet-software {
   sudo rm /usr/share/keyrings/microsoft-edge.gpg &> /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y microsoft-edge-stable 1> /dev/null
+  sudo apt-get remove -y microsoft-edge-stable > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove 1> /dev/null
+  sudo apt-get autoremove > /dev/null
 
   # Remove software from snap
-  sudo snap remove chromium 1> /dev/null
-  sudo snap remove spotify 1> /dev/null
+  sudo snap remove chromium > /dev/null
+  sudo snap remove spotify > /dev/null
 }
 
 function install-office-software {
   echo -e "\n= Installing office-software package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y libreoffice cups cups-ipp-utils hplip printer-driver-gutenprint 1> /dev/null
+  sudo apt-get install -y libreoffice cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
 
   # Add TexStudio repository
-  sudo add-apt-repository -y ppa:sunderme/texstudio 1> /dev/null
+  sudo add-apt-repository -y ppa:sunderme/texstudio > /dev/null
 
   # Upate software list
-  sudo apt-get update 1> /dev/null
+  sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -y texstudio 1> /dev/null
+  sudo apt-get install -y texstudio > /dev/null
 
   # Install software from snap
-  sudo snap install wps-office 1> /dev/null
-  sudo snap install krita 1> /dev/null
+  sudo snap install wps-office > /dev/null
+  sudo snap install krita > /dev/null
 }
 
 function uninstall-office-software {
   echo -e "\n= Uninstalling office-software package =\n"
 
   # Remove TexStudio repository
-  sudo remove-apt-repository -y ppa:sunderme/texstudio 1> /dev/null
+  sudo remove-apt-repository -y ppa:sunderme/texstudio > /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y libreoffice texstudio cups cups-ipp-utils hplip printer-driver-gutenprint 1> /dev/null
+  sudo apt-get remove -y libreoffice texstudio cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove 1> /dev/null
+  sudo apt-get autoremove > /dev/null
 
   # Remove software from snap
-  sudo snap remove wps-office 1> /dev/null
-  sudo snap remove krita 1> /dev/null
+  sudo snap remove wps-office > /dev/null
+  sudo snap remove krita > /dev/null
 }
 
 function install-edu-software {
   echo -e "\n= Installing edu-software package =\n"
 
   # Install software from snap
-  sudo snap install teams-for-linux 1> /dev/null
+  sudo snap install teams-for-linux > /dev/null
 }
 
 function uninstall-edu-software {
   echo -e "\n= Uninstalling edu-software package =\n"
 
   # Remove software from snap
-  sudo snap remove teams-for-linux 1> /dev/null
+  sudo snap remove teams-for-linux > /dev/null
 }
 
 function install-creative-software {
   echo -e "\n= Installing creative-software package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio 1> /dev/null
+  sudo apt-get install -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio > /dev/null
 
   # Downloads NDI with OBS NDI addon packages
   sudo rm /tmp/ndi.deb &> /dev/null
@@ -131,9 +132,9 @@ function install-creative-software {
 
   # Install NDI with OBS NDI addon from downloaded packages
   sudo dpkg -i /tmp/ndi.deb &> /dev/null
-  sudo apt-get --fix-broken install -y 1> /dev/null
+  sudo apt-get --fix-broken install -y > /dev/null
   sudo dpkg -i /tmp/obs-ndi.deb &> /dev/null
-  sudo apt-get --fix-broken install -y 1> /dev/null
+  sudo apt-get --fix-broken install -y > /dev/null
 
   # Downloads Lightworks
   sudo rm /tmp/lightworks.deb &> /dev/null
@@ -141,31 +142,31 @@ function install-creative-software {
 
   # Install Lightworks from downloaded packages
   sudo dpkg -i /tmp/lightworks.deb &> /dev/null
-  sudo apt-get --fix-broken install -y 1> /dev/null
+  sudo apt-get --fix-broken install -y > /dev/null
 }
 
 function uninstall-creative-software {
   echo -e "\n= Uninstalling creative-software package =\n"
 
   # Remove installed software
-  sudo apt-get remove -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio 1> /dev/null
+  sudo apt-get remove -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove 1> /dev/null
+  sudo apt-get autoremove > /dev/null
 
   # Remove NDI with OBS NDI addon
-  sudo dpkg -r ndi 1> /dev/null
-  sudo dpkg -r obs-ndi 1> /dev/null
+  sudo dpkg -r ndi > /dev/null
+  sudo dpkg -r obs-ndi > /dev/null
 
   # Remove Lightworks
-  sudo dpkg -r lightworks 1> /dev/null
+  sudo dpkg -r lightworks > /dev/null
 }
 
 function install-programming-software {
   echo -e "\n= Installing programming-software package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino 1> /dev/null
+  sudo apt-get install -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino > /dev/null
 
   # Add Docker repository
   sudo install -m 0755 -d /etc/apt/keyrings
@@ -177,7 +178,7 @@ function install-programming-software {
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
   # Install Julialang
-  sudo /bin/bash -c "curl -fsSL https://install.julialang.org | sh -s -- -y 1> /dev/null" 1> /dev/null
+  sudo /bin/bash -c "curl -fsSL https://install.julialang.org | sh -s -- -y > /dev/null" > /dev/null
 
   # Add Unity3D repository and download libssl1.1
   sudo /bin/bash -c "wget -qO - https://hub.unity3d.com/linux/keys/public | tee /etc/apt/trusted.gpg.d/unityhub.asc" &>/dev/null
@@ -187,26 +188,26 @@ function install-programming-software {
 
   # Install libssl1.1 from downloaded packages
   sudo dpkg -i /tmp/libssl11.deb &> /dev/null
-  sudo apt-get --fix-broken install -y 1> /dev/null
+  sudo apt-get --fix-broken install -y > /dev/null
 
   # Add C# IntelliSense
   sudo /bin/bash -c 'wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/mono-official-stable.gpg' &>/dev/null
   sudo /bin/bash -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list' &>/dev/null
 
   # Upate software list
-  sudo apt-get update 1> /dev/null
+  sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 1> /dev/null
+  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
 
   # Install software from snap
-  sudo snap install pycharm-community --classic 1> /dev/null
-  sudo snap install intellij-idea-community --classic 1> /dev/null
-  sudo snap install code --classic 1> /dev/null
-  sudo snap install brackets --classic 1> /dev/null
-  sudo snap install flutter --classic 1> /dev/null
-  sudo snap install kate --classic 1> /dev/null
-  sudo snap install go --classic 1> /dev/null
+  sudo snap install pycharm-community --classic > /dev/null
+  sudo snap install intellij-idea-community --classic > /dev/null
+  sudo snap install code --classic > /dev/null
+  sudo snap install brackets --classic > /dev/null
+  sudo snap install flutter --classic > /dev/null
+  sudo snap install kate --classic > /dev/null
+  sudo snap install go --classic > /dev/null
 }
 
 function uninstall-programming-software {
@@ -217,7 +218,7 @@ function uninstall-programming-software {
   sudo rm /etc/apt/sources.list.d/docker.list
 
   # Remove julia
-  sudo juliaup self uninstall 1> /dev/null
+  sudo juliaup self uninstall > /dev/null
 
   # Remove Unity3D repository
   sudo rm /etc/apt/trusted.gpg.d/unityhub.asc
@@ -228,22 +229,22 @@ function uninstall-programming-software {
   sudo rm /etc/apt/sources.list.d/mono-official-stable.list
 
   # Remove installed software
-  sudo apt-get remove -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 1> /dev/null
+  sudo apt-get remove -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove 1> /dev/null
+  sudo apt-get autoremove > /dev/null
 
   # Upate software list
-  sudo apt-get update 1> /dev/null
+  sudo apt-get update > /dev/null
 
   # Remove software from snap
-  sudo snap remove pycharm-community --classic 1> /dev/null
-  sudo snap remove intellij-idea-community --classic 1> /dev/null
-  sudo snap remove code --classic 1> /dev/null
-  sudo snap remove brackets --classic 1> /dev/null
-  sudo snap remove flutter --classic 1> /dev/null
-  sudo snap remove kate --classic 1> /dev/null
-  sudo snap remove go --classic 1> /dev/null
+  sudo snap remove pycharm-community --classic > /dev/null
+  sudo snap remove intellij-idea-community --classic > /dev/null
+  sudo snap remove code --classic > /dev/null
+  sudo snap remove brackets --classic > /dev/null
+  sudo snap remove flutter --classic > /dev/null
+  sudo snap remove kate --classic > /dev/null
+  sudo snap remove go --classic > /dev/null
 }
 
 # Install OSE ceryficate
@@ -253,8 +254,8 @@ function install-ose {
   sudo rm -R /tmp/ose.zip
   sudo rm -R /tmp/ose
   sudo /bin/bash -c "wget -qO - https://ose.gov.pl/media/2022/09/pliki_linux.zip | sudo tee /tmp/ose.zip" &>/dev/null
-  unzip /tmp/ose.zip -d /tmp/ose 1> /dev/null
-  sudo /bin/bash -c "cd /tmp/ose/cert_install/; bash /tmp/ose/cert_install/cert_install.sh" 1> /dev/null
+  unzip /tmp/ose.zip -d /tmp/ose > /dev/null
+  sudo /bin/bash -c "cd /tmp/ose/cert_install/; bash /tmp/ose/cert_install/cert_install.sh" > /dev/null
 }
 
 # Uninstall OSE ceryficate
@@ -285,13 +286,13 @@ function uninstall-ose {
 
   # Remove certyficate from system
   sudo rm /usr/local/share/ca-certificates/certyfikat.crt
-  sudo update-ca-certificates 1> /dev/null
+  sudo update-ca-certificates > /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y libnss3-tools 1> /dev/null
+  sudo apt-get remove -y libnss3-tools > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove 1> /dev/null
+  sudo apt-get autoremove > /dev/null
 }
 
 function install-remote-support {
@@ -302,10 +303,10 @@ function install-remote-support {
   echo "deb http://deb.anydesk.com/ all main" > /etc/apt/sources.list.d/anydesk-stable.list
 
   # Upate software list
-  sudo apt-get update 1> /dev/null
+  sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -y anydesk 1> /dev/null
+  sudo apt-get install -y anydesk > /dev/null
 
   # Download TeamViewer
   rm -R /tmp/teamviewer.deb &> /dev/null
@@ -313,7 +314,7 @@ function install-remote-support {
 
   # Install TeamViewer
   sudo dpkg -i /tmp/teamviewer.deb &> /dev/null
-  sudo apt-get --fix-broken install -y 1> /dev/null
+  sudo apt-get --fix-broken install -y > /dev/null
 }
 
 function uninstall-remote-support {
@@ -324,36 +325,36 @@ function uninstall-remote-support {
   sudo rm /etc/apt/sources.list.d/anydesk-stable.list &> /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y anydesk 1> /dev/null
+  sudo apt-get remove -y anydesk > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove 1> /dev/null
+  sudo apt-get autoremove > /dev/null
 
   # Upate software list
-  sudo apt-get update 1> /dev/null
+  sudo apt-get update > /dev/null
 
   # Remove TeamViewer
-  sudo dpkg -r teamviewer 1> /dev/null
+  sudo dpkg -r teamviewer > /dev/null
 }
 
 function install-aad {
   echo -e "\n= Installing aad-auth package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install libpam-aad libnss-aad 1> /dev/null
+  sudo apt-get install libpam-aad libnss-aad > /dev/null
 
   # Enable automatic home creation for AAD users
-  sudo pam-auth-update --enable mkhomedir 1> /dev/null
+  sudo pam-auth-update --enable mkhomedir > /dev/null
 }
 
 function uninstall-aad {
   echo -e "\n= Uninstalling aad-auth package =\n"
 
   # Remove installed software
-  sudo apt-get remove libpam-aad libnss-aad 1> /dev/null
+  sudo apt-get remove libpam-aad libnss-aad > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove 1> /dev/null
+  sudo apt-get autoremove > /dev/null
 
   # Remove AAD config
   sudo rm /etc/aad.conf &> /dev/null
@@ -383,31 +384,31 @@ function install-ui-mods {
   echo -e "\n= Installing ui-mods package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y gnome-shell-extensions dbus-x11 1> /dev/null
+  sudo apt-get install -y gnome-shell-extensions dbus-x11 > /dev/null
 
   # Fix gnome-shell-extensions
-  sudo apt-get install -y gnome-shell-extension-prefs 1> /dev/null
-  sudo apt-get remove -y gnome-shell-extension-prefs 1> /dev/null
-  sudo apt-get install -y gnome-shell-extension-prefs 1> /dev/null
+  sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
+  sudo apt-get remove -y gnome-shell-extension-prefs > /dev/null
+  sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
 
   # Install gnome extensions cli from pipx
-  sudo /bin/bash -c "pipx install gnome-extensions-cli --system-site-packages" 1> /dev/null
-  sudo /bin/bash -c "pipx ensurepath" 1> /dev/null
+  sudo /bin/bash -c "pipx install gnome-extensions-cli --system-site-packages" > /dev/null
+  sudo /bin/bash -c "pipx ensurepath" > /dev/null
 
   # Enable user-theme gnome extensions
-  sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com" 1> /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com" > /dev/null
 
   # Install blur-my-shell gnome extension
-  sudo /bin/bash -c "gnome-extensions-cli install blur-my-shell@aunetx" 1> /dev/null
-  sudo /bin/bash -c "gnome-extensions-cli disable blur-my-shell@aunetx" 1> /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli install blur-my-shell@aunetx" > /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli disable blur-my-shell@aunetx" > /dev/null
 
   # Install MacOS-like skin
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; sudo ./install.sh -i ubuntu; sudo ./tweaks.sh -f monterey; sudo ./tweaks.sh -g -N -b '$(get-custom-auth-background)'" 1> /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; sudo ./install.sh -i ubuntu; sudo ./tweaks.sh -f monterey; sudo ./tweaks.sh -g -N -b '$(get-custom-auth-background)'" > /dev/null
 
   # Install MacOS-like icons
   sudo mkdir whitesur-icons;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a" 1> /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a" > /dev/null
 }
 
 function uninstall-ui-mods {
@@ -417,32 +418,32 @@ function uninstall-ui-mods {
 
   # Remove MacOS-like skin
   sudo mkdir whitesur;
-  sudo git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 1> /dev/null
-  (cd whitesur; sudo ./install.sh -r 1> /dev/null)
+  sudo git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 > /dev/null
+  (cd whitesur; sudo ./install.sh -r > /dev/null)
 
   # Remove MacOS-like icons
   sudo mkdir whitesur-icons;
-  sudo git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1 1> /dev/null
-  (cd whitesur-icons; sudo ./install.sh -r 1> /dev/null)
+  sudo git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1 > /dev/null
+  (cd whitesur-icons; sudo ./install.sh -r > /dev/null)
 
   # Remove installed software
-  sudo apt-get remove -y gnome-shell-extensions 1> /dev/null
+  sudo apt-get remove -y gnome-shell-extensions > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove 1> /dev/null
+  sudo apt-get autoremove > /dev/null
 }
 
 function update-software {
   echo -e "\n= Updates software =\n"
 
   # Update software list
-  sudo apt-get update 1> /dev/null
+  sudo apt-get update > /dev/null
 
   # Update software
-  sudo apt-get upgrade -y 1> /dev/null
+  sudo apt-get upgrade -y > /dev/null
 
   # Update snap software
-  sudo snap refresh 1> /dev/null
+  sudo snap refresh > /dev/null
 }
 
 function schedule-update-software {
@@ -479,17 +480,17 @@ function set-general-ui-settings {
   if [ ! -f "/usr/local/share/fonts/Rubik.ttf" ]
   then
     sudo cp resources/Rubik.ttf /usr/local/share/fonts/Rubik.ttf
-    fc-cache -f -v 1> /dev/null
+    fc-cache -f -v > /dev/null
   fi
   if [ ! -f "/usr/local/share/fonts/Rubik-Italic.ttf" ]
   then
     sudo cp resources/Rubik-Italic.ttf /usr/local/share/fonts/Rubik-Italic.ttf
-    fc-cache -f -v 1> /dev/null
+    fc-cache -f -v > /dev/null
   fi
   if [ ! -f "/usr/local/share/fonts/RubikMonoOne.ttf" ]
   then
     sudo cp resources/RubikMonoOne.ttf /usr/local/share/fonts/RubikMonoOne.ttf
-    fc-cache -f -v 1> /dev/null
+    fc-cache -f -v > /dev/null
   fi
   sudo mkdir -p /etc/dconf/db/local.d/locks
   sudo mkdir -p /etc/dconf/db/gdm.d/locks
@@ -501,7 +502,7 @@ function set-auth-ui-settings {
   # Change and lock Gnome authorization screen settings
   sudo sh -c $'echo "[org/gnome/desktop/screensaver]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\nlogout-enabled=true\nlock-delay=360\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
   sudo sh -c $'echo "# Prevent changes to the following keys:\n\n/org/gnome/desktop/screensaver/picture-uri\n/org/gnome/desktop/screensaver/picture-options\n/org/gnome/desktop/screensaver/primary-color\n/org/gnome/desktop/screensaver/secondary-color\n/org/gnome/desktop/screensaver/logout-enabled\n/org/gnome/desktop/screensaver/lock-delay\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-auth'
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function unset-auth-ui-settings {
@@ -510,7 +511,7 @@ function unset-auth-ui-settings {
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-auth &> /dev/null
   sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-auth &> /dev/null
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function set-auth-nouserslist-settings {
@@ -519,7 +520,7 @@ function set-auth-nouserslist-settings {
   # Change and lock Gnome authorization screen settings
   sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Do not show the user list\ndisable-user-list=true\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-nouserslist'
   sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/disable-user-list\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-nouserslist'
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function unset-auth-nouserslist-settings {
@@ -528,7 +529,7 @@ function unset-auth-nouserslist-settings {
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-nouserslist &> /dev/null
   sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-nouserslist &> /dev/null
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function set-auth-notice-settings {
@@ -539,14 +540,14 @@ function set-auth-notice-settings {
     # Change and lock Gnome authorization screen settings
     sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display text message banner\nbanner-message-enable=true\nbanner-message-text=\'$1\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice' -o $1
     sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/banner-message-enable\norg/gnome/login-screen/banner-message-text\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-notice'
-    sudo dconf update 1> /dev/null
+    sudo dconf update > /dev/null
   else
     if [ -f /opt/bluesparrow/ubuntutweaks/banner.txt ]
     then
       # Change and lock Gnome authorization screen settings
       sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display text message banner\nbanner-message-enable=true\nbanner-message-text=\'$(cat /opt/bluesparrow/ubuntutweaks/banner.txt)\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice'
       sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/banner-message-enable\norg/gnome/login-screen/banner-message-text\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-notice'
-      sudo dconf update 1> /dev/null
+      sudo dconf update > /dev/null
     else
       echo "No text provided!" >&2
     fi
@@ -559,7 +560,7 @@ function unset-auth-notice-settings {
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice &> /dev/null
   sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-notice &> /dev/null
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function set-auth-logo-settings {
@@ -570,12 +571,12 @@ function set-auth-logo-settings {
     # Change and lock Gnome authorization screen settings
     sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display custom logo image\nblogo=\'/opt/bluesparrow/ubuntutweaks/logo.png\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo'
     sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/banner-message-text\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo'
-    sudo dconf update 1> /dev/null
+    sudo dconf update > /dev/null
   else
     # Change and lock Gnome authorization screen settings
     sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display custom logo image\nblogo=\'$(realpath ./resources/logo.png)\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo'
     sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/banner-message-text\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo'
-    sudo dconf update 1> /dev/null
+    sudo dconf update > /dev/null
   fi
 }
 
@@ -585,31 +586,31 @@ function unset-auth-logo-settings {
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo &> /dev/null
   sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo &> /dev/null
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function set-desktop-ui-settings {
   echo -e "\n= Sets desktop ui settings =\n"
 
   # Enable blur-my-shell gnome extension
-  gnome-extensions-cli enable blur-my-shell@aunetx 1> /dev/null
+  gnome-extensions-cli enable blur-my-shell@aunetx > /dev/null
 
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/online-accounts]\n\n# Disable gnome online accounts\nwhitelisted-providers=[\'\']\n\n[com/ubuntu/SoftwareProperties]\n\nubuntu-pro-banner-visible=false\n\n[org/gnome/shell/extensions/dash-to-dock]\n\nextend-height=false\ndock-position=\'BOTTOM\'\nshow-apps-at-top=true\nautohide-in-fullscreen=true\nmulti-monitor=true\nshow-mounts=false\n\n[org/gnome/desktop/interface]\n\ngtk-theme=\'WhiteSur-Light\'\nicon-theme=\'WhiteSur-light\'\nclock-show-weekday=true\n\n[org/gnome/desktop/wm/preferences]\n\ntheme=\'WhiteSur-Light\'\n\n[org/gnome/nautilus/preferences]\n\nopen-folder-on-dnd-hover=true\n\n[org/gnome/mutter]\n\ncenter-new-windows=true\nworkspaces-only-on-primary=false\n\n[org/gnome/shell/extensions/user-theme]\n\nname=\'WhiteSur-Light\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop'
   sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/online-accounts/whitelisted-providers\ncom/ubuntu/SoftwareProperties/ubuntu-pro-banner-visible\norg/gnome/shell/extensions/dash-to-dock/extend-height\norg/gnome/shell/extensions/dash-to-dock/dock-position\norg/gnome/shell/extensions/dash-to-dock/show-apps-at-top\norg/gnome/shell/extensions/dash-to-dock/autohide-in-fullscreen\norg/gnome/shell/extensions/dash-to-dock/multi-monitor\norg/gnome/shell/extensions/dash-to-dock/show-mounts\norg/gnome/desktop/interface/gtk-theme\norg/gnome/desktop/interface/icon-theme\norg/gnome/desktop/interface/clock-show-weekday\norg/gnome/desktop/wm/preferences/theme\norg/gnome/nautilus/preferences/open-folder-on-dnd-hover\norg/gnome/mutter/center-new-windows\norg/gnome/mutter/workspaces-only-on-primary\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop'
-  sudo dconf update 1> /dev/nulls
+  sudo dconf update > /dev/nulls
 }
 
 function unset-desktop-ui-settings {
   echo -e "\n= Unsets desktop ui settings =\n"
 
   # Disable blur my shell
-  sudo gnome-extensions-cli disable blur-my-shell@aunetx 1> /dev/null
+  sudo gnome-extensions-cli disable blur-my-shell@aunetx > /dev/null
 
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop &> /dev/null
   sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop &> /dev/null
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function set-desktop-dark-ui-settings {
@@ -617,7 +618,7 @@ function set-desktop-dark-ui-settings {
 
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/desktop/interface]\n\ngtk-theme=\'WhiteSur-Dark\'\nicon-theme=\'WhiteSur-dark\'\n\n[org/gnome/desktop/wm/preferences]\n\ntheme=\'WhiteSur-Dark\'\n\n[org/gnome/shell/extensions/user-theme]\n\nname=\'WhiteSur-Dark\'\n">/etc/dconf/db/local.d/01-bs-ubuntutweaks-desktop-dark'
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function unset-desktop-dark-ui-settings {
@@ -625,7 +626,7 @@ function unset-desktop-dark-ui-settings {
 
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/01-bs-ubuntutweaks-desktop-dark &> /dev/null
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function set-desktop-left-appnavigation-settings {
@@ -634,7 +635,7 @@ function set-desktop-left-appnavigation-settings {
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/desktop/wm/preferences]\n\nbutton-layout=\'close,minimize,maximize:\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-left-appnavigation'
   sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/desktop/wm/preferences/button-layout\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-left-appnavigation'
-  sudo dconf update 1> /dev/nulls
+  sudo dconf update > /dev/nulls
 }
 
 function unset-desktop-left-appnavigation-settings {
@@ -643,7 +644,7 @@ function unset-desktop-left-appnavigation-settings {
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-left-appnavigation &> /dev/null
   sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-left-appnavigation &> /dev/null
-  sudo dconf update 1> /dev/nulls
+  sudo dconf update > /dev/nulls
 }
 
 function set-desktop-background-settings {
@@ -657,7 +658,7 @@ function set-desktop-background-settings {
   else
     sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-background &> /dev/null
   fi
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function unset-desktop-background-settings {
@@ -666,7 +667,7 @@ function unset-desktop-background-settings {
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-background &> /dev/null
   sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-background &> /dev/null
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function set-rubik-as-defaultfont-settings {
@@ -675,7 +676,7 @@ function set-rubik-as-defaultfont-settings {
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/desktop/interface]\n\nfont-name=\'Rubik 11\'\ntitlebar-font=\'Rubik Bold 11\'\nmonospace-font-name=\'Rubik Mono One 13\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont'
   sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/desktop/interface/font-name\norg/gnome/desktop/interface/titlebar-font\norg/gnome/desktop/interface/monospace-font-name\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop'
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function unset-rubik-as-defaultfont-settings {
@@ -684,7 +685,7 @@ function unset-rubik-as-defaultfont-settings {
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont &> /dev/null
   sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-rubik-as-defaultfont &> /dev/null
-  sudo dconf update 1> /dev/null
+  sudo dconf update > /dev/null
 }
 
 function set-aad-settings {
@@ -781,14 +782,14 @@ function install-tweaks {
   fi
 
   # Install required git software
-  sudo apt-get install -y git 1> /dev/null
+  sudo apt-get install -y git > /dev/null
 
   # Create base and optional directories
   sudo mkdir -p /var/bluesparrow/ubuntutweaks
   sudo mkdir -p /opt/bluesparrow/ubuntutweaks
 
   # Clone tweaks into system
-  sudo git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks 1> /dev/null
+  sudo git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks > /dev/null
 
   # Set right scripts permissions
   sudo chmod 755 /var/bluesparrow/ubuntutweaks/run.sh

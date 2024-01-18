@@ -19,6 +19,9 @@ function install-general-software {
   # Install software and libs from ubuntu repositories
   sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx > /dev/null
 
+  # Initialize pipx
+  sudo /bin/bash -c "pipx ensurepath" > /dev/null
+
   # Install realpath if not found (bypass warning)
   sudo apt-get install -qy realpath &>/dev/null
 }
@@ -178,7 +181,7 @@ function install-programming-software {
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
   # Install Julialang
-  sudo /bin/bash -c "curl -fsSL https://install.julialang.org | sh -s -- -y > /dev/null" > /dev/null
+  sudo /bin/bash -c "curl -fsSL https://install.julialang.org | sh -s -- -y" > /dev/null
 
   # Add Unity3D repository and download libssl1.1
   sudo /bin/bash -c "wget -qO - https://hub.unity3d.com/linux/keys/public | tee /etc/apt/trusted.gpg.d/unityhub.asc" &>/dev/null
@@ -392,8 +395,7 @@ function install-ui-mods {
   #sudo apt-get install -qy gnome-shell-extension-prefs > /dev/null
 
   # Install gnome extensions cli from pipx
-  sudo /bin/bash -c "pipx install gnome-extensions-cli --system-site-packages"
-  sudo /bin/bash -c "pipx ensurepath"
+  sudo /bin/bash -c "PIPX_BIN_DIR=/usr/local/bin; pipx install gnome-extensions-cli --system-site-packages"
 
   # Enable user-theme gnome extensions
   sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com"
@@ -414,7 +416,7 @@ function install-ui-mods {
 function uninstall-ui-mods {
   echo -e "\n= Uninstalling ui-mods package =\n"
 
-  sudo rm -r ~/.local/share/gnome-shell/extensions/blur-my-shell@aunetx &> /dev/null
+  sudo rm -R ~/.local/share/gnome-shell/extensions/blur-my-shell@aunetx &> /dev/null
 
   # Remove MacOS-like skin
   sudo mkdir whitesur;
@@ -593,7 +595,7 @@ function set-desktop-ui-settings {
   echo -e "\n= Sets desktop ui settings =\n"
 
   # Enable blur-my-shell gnome extension
-  gnome-extensions-cli enable blur-my-shell@aunetx > /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli enable blur-my-shell@aunetx" > /dev/null
 
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/online-accounts]\n\n# Disable gnome online accounts\nwhitelisted-providers=[\'\']\n\n[com/ubuntu/SoftwareProperties]\n\nubuntu-pro-banner-visible=false\n\n[org/gnome/shell/extensions/dash-to-dock]\n\nextend-height=false\ndock-position=\'BOTTOM\'\nshow-apps-at-top=true\nautohide-in-fullscreen=true\nmulti-monitor=true\nshow-mounts=false\n\n[org/gnome/desktop/interface]\n\ngtk-theme=\'WhiteSur-Light\'\nicon-theme=\'WhiteSur-light\'\nclock-show-weekday=true\n\n[org/gnome/desktop/wm/preferences]\n\ntheme=\'WhiteSur-Light\'\n\n[org/gnome/nautilus/preferences]\n\nopen-folder-on-dnd-hover=true\n\n[org/gnome/mutter]\n\ncenter-new-windows=true\nworkspaces-only-on-primary=false\n\n[org/gnome/shell/extensions/user-theme]\n\nname=\'WhiteSur-Light\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop'
@@ -798,12 +800,7 @@ function install-tweaks {
   # Add tweaks into shell path
   sudo touch /etc/profile.d/custom.sh
   sudo chmod +x /etc/profile.d/custom.sh
-  if [ -f "/etc/profile.d/custom.sh" ]
-  then
-    sudo /bin/bash -c $'echo -e "\nalias bs-ubuntutweaks=\'sudo bash /var/bluesparrow/ubuntutweaks/run.sh\'\n" >> /etc/profile.d/custom.sh' > /dev/null
-  else
-    sudo /bin/bash -c $'echo -e "#!/bin/sh\nalias bs-ubuntutweaks=\'sudo bash /var/bluesparrow/ubuntutweaks/run.sh\'\n" > /etc/profile.d/custom.sh' > /dev/null
-  fi
+  sudo /bin/bash -c $'echo -e "#!/bin/sh\nalias bs-ubuntutweaks=\'sudo bash /var/bluesparrow/ubuntutweaks/run.sh\'\n" > /etc/profile.d/bs-ubuntutweaks.sh' > /dev/null
   echo "If you want to use tweaks utility without loging out and logging in again into system, you had to type \"alias bs-ubuntutweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\" in yout console"
 }
 
@@ -841,8 +838,9 @@ function uninstall-tweaks {
 
   sudo rm -R /var/bluesparrow/ubuntutweaks &> /dev/null
   sudo rm -R /opt/bluesparrow/ubuntutweaks &> /dev/null
-  sudo rm -R /etc/cron.d/bs-ubuntutweaks-updateself &> /dev/null
-  sudo rm -R /etc/cron.d/bs-ubuntutweaks-updatesoftware &> /dev/null
+  sudo rm /etc/cron.d/bs-ubuntutweaks-updateself &> /dev/null
+  sudo rm /etc/cron.d/bs-ubuntutweaks-updatesoftware &> /dev/null
+  sudo rm /etc/profile.d/bs-ubuntutweaks.sh &> /dev/null
 }
 
 function purge-tweaks {
@@ -1021,10 +1019,10 @@ function install-prompt {
       aad-wc | add-auth-without-config ) install-aad ;;
       ui | ui-mods ) install-ui-mods; configure-prompt set-auth-ui-mods; configure-prompt set-auth-logo; configure-prompt set-desktop-ui-mods; configure-prompt set-desktop-background; configure-prompt set-rubik-as-defaultfont; need_reboot=1 ;;
       ui-wc | ui-mods-without-config ) install-ui-mods ;;
-      ok | office-kit ) install-internet-software; install-office-software; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; need_reboot=1 ;;
-      sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps; schedule-update-software; schedule-update-tweaks; need_reboot=1 ;;
-      tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; need_reboot=1 ;;
-      pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt ui-mods; schedule-update-software; schedule-update-tweaks; need_reboot=1 ;;
+      ok | office-kit ) install-internet-software; install-office-software; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
+      sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
+      tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
+      pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt ui-mods; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
       okaad | office-kit-aad ) install-prompt office-kit; install-aad ;;
       skaad | student-kit-aad ) install-prompt student-kit; install-aad ;;
       tkaad | teacher-kit-aad ) install-prompt teacher-kit; install-aad ;;

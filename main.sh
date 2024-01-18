@@ -36,7 +36,7 @@ function install-internet-software {
   sudo apt-get install -y microsoft-edge-stable 1> /dev/null
 
   # Downloads Zoom.us
-  sudo rm -R /tmp/zoom.deb &> /dev/null
+  sudo rm /tmp/zoom.deb &> /dev/null
   sudo /bin/bash -c "wget -qO - https://zoom.us/client/5.17.1.1840/zoom_amd64.deb | tee /tmp/zoom.deb" &> /dev/null
 
   # Install Zoom.us
@@ -90,7 +90,7 @@ function uninstall-office-software {
   echo -e "= Uninstalling office-software package =\n\n"
 
   # Remove TexStudio repository
-  sudo remove-apt-get-repository -y ppa:sunderme/texstudio 1> /dev/null
+  sudo remove-apt-repository -y ppa:sunderme/texstudio 1> /dev/null
 
   # Remove installed software
   sudo apt-get remove -y libreoffice texstudio cups cups-ipp-utils hplip printer-driver-gutenprint 1> /dev/null
@@ -252,9 +252,9 @@ function install-ose {
 
   sudo rm -R /tmp/ose.zip
   sudo rm -R /tmp/ose
-  wget -qO - https://ose.gov.pl/media/2022/09/pliki_linux.zip | sudo tee /tmp/ose.zip
+  sudo /bin/bash -c "wget -qO - https://ose.gov.pl/media/2022/09/pliki_linux.zip | sudo tee /tmp/ose.zip" &>/dev/null
   unzip /tmp/ose.zip -d /tmp/ose 1> /dev/null
-  sudo /tmp/ose/cert_install/cert_install.sh 1> /dev/null
+  sudo bash /tmp/ose/cert_install/cert_install.sh 1> /dev/null
 }
 
 # Uninstall OSE ceryficate
@@ -361,7 +361,7 @@ function uninstall-aad {
 
 # Prints auth background path (internal-use)
 function get-custom-auth-background {
-  if [ -f '/opt/bluesparrow/ubuntutweaks/bg-auth.jpg']
+  if [ -f '/opt/bluesparrow/ubuntutweaks/bg-auth.jpg' ]
   then
     echo "/opt/bluesparrow/ubuntutweaks/bg-auth.jpg"
   else
@@ -371,7 +371,7 @@ function get-custom-auth-background {
 
 # Prints desktop background path (internal-use)
 function get-custom-desktop-background {
-  if [ -f '/opt/bluesparrow/ubuntutweaks/bg-desktop.jpg']
+  if [ -f '/opt/bluesparrow/ubuntutweaks/bg-desktop.jpg' ]
   then
     echo "/opt/bluesparrow/ubuntutweaks/bg-desktop.jpg"
   else
@@ -392,6 +392,7 @@ function install-ui-mods {
 
   # Install gnome extensions cli from pipx
   pipx install gnome-extensions-cli --system-site-packages 1> /dev/null
+  pipx ensurepath
 
   # Enable user-theme gnome extensions
   gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com 1> /dev/null
@@ -493,6 +494,7 @@ function set-general-ui-settings {
     fc-cache -f -v 1> /dev/null
   fi
   sudo mkdir -p /etc/dconf/db/local.d/locks
+  sudo mkdir -p /etc/dconf/db/gdm.d/locks
 }
 
 function set-auth-ui-settings {
@@ -884,10 +886,10 @@ function main-prompt {
     usu | unschedule-update ) unschedule-update-software ;;
     is | install-self ) install-tweaks ;;
     us | update-self ) update-tweaks ;;
-    rs | remove-self ) uninstall-tweaks ;;
-    ps | purge-self ) purge-tweaks ;;
-    sus | schedule-update-self ) schedule-update-self ;;
-    usus | unschedule-update-self ) unchedule-update-self ;;
+    rs | remove-self ) uninstall-tweaks; need_reboot=1 ;;
+    ps | purge-self ) purge-tweaks; need_reboot=1 ;;
+    sus | schedule-update-self ) schedule-update-tweaks ;;
+    usus | unschedule-update-self ) unchedule-update-tweaks ;;
     h | "-h" | help | "--help" | '' ) print-help ;;
     * ) echo -e "Invalid option!\n" >&2; print-help ;;
   esac
@@ -999,23 +1001,23 @@ function install-prompt {
       es | edu-software ) install-edu-software ;;
       cs | creative-software ) install-creative-software ;;
       ps | programming-software ) install-programming-software ;;
-      ose | ose-certyficate ) install-ose ;;
+      ose | ose-certyficate ) install-ose; need_reboot=1 ;;
       rs | remote-support ) install-remote-support ;;
-      aad | add-auth ) install-aad; configure-prompt set-aad-settings ;;
+      aad | add-auth ) install-aad; configure-prompt set-aad-settings; need_reboot=1 ;;
       aad-wc | add-auth-without-config ) install-aad ;;
-      ui | ui-mods ) install-ui-mods; configure-prompt set-auth-ui-mods; configure-prompt set-auth-logo; configure-prompt set-desktop-ui-mods; configure-prompt set-desktop-background; configure-prompt set-rubik-as-defaultfont ;;
+      ui | ui-mods ) install-ui-mods; configure-prompt set-auth-ui-mods; configure-prompt set-auth-logo; configure-prompt set-desktop-ui-mods; configure-prompt set-desktop-background; configure-prompt set-rubik-as-defaultfont; need_reboot=1 ;;
       ui-wc | ui-mods-without-config ) install-ui-mods ;;
-      ok | office-kit ) install-internet-software; install-office-software; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-self ;;
-      sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps; schedule-update-software; schedule-update-self ;;
-      tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-self ;;
-      pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt ui-mods; schedule-update-software; schedule-update-self ;;
+      ok | office-kit ) install-internet-software; install-office-software; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; need_reboot=1 ;;
+      sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps; schedule-update-software; schedule-update-tweaks; need_reboot=1 ;;
+      tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; need_reboot=1 ;;
+      pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt ui-mods; schedule-update-software; schedule-update-tweaks; need_reboot=1 ;;
       okaad | office-kit-aad ) install-prompt office-kit; install-aad ;;
       skaad | student-kit-aad ) install-prompt student-kit; install-aad ;;
       tkaad | teacher-kit-aad ) install-prompt teacher-kit; install-aad ;;
       pkaad | proffesional-kit-aad ) install-prompt proffesional-kit; install-aad ;;
       okaad-wc | office-kit-aad-without-config ) install-internet-software; install-office-software; install-remote-support; install-ui-mods;;
-      skaad-wc | student-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods;;
-      tkaad-wc | teacher-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods;;
+      skaad-wc | student-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods ;;
+      tkaad-wc | teacher-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods ;;
       pkaad-wc | proffesional-kit-aad-without-config ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-ui-mods ;;
       l | list | '' ) print-packages ;;
       * ) echo -e "Invalid option!\n" >&2; print-packages ;;
@@ -1031,27 +1033,27 @@ function configure-prompt {
     ulas | unlock-all-settings-apps ) unlock-all-settings-apps ;;
     lis | lock-important-settings-apps ) lock-important-settings-apps ;;
     ulcs | unlock-common-settings-apps ) unlock-common-settings-apps ;;
-    sau | set-auth-ui-mods ) set-auth-ui-settings ;;
-    usau | unset-auth-ui-mods ) unset-auth-ui-settings ;;
-    sanul | set-auth-nouserslist ) set-auth-nouserslist-settings ;;
-    usanul | unset-auth-nouserslist ) unset-auth-nouserslist-settings ;;
-    san | set-auth-notice ) set-auth-notice-settings $2 ;;
-    usan | unset-auth-notice ) unset-auth-notice-settings ;;
-    sal | set-auth-logo ) set-auth-logo-settings ;;
-    usal | unset-auth-logo ) unset-auth-logo-settings ;;
-    sdu | set-desktop-ui-mods ) set-desktop-ui-settings ;;
-    usdu | unset-desktop-ui-mods ) unset-desktop-ui-settings ;;
-    sddut | set-desktop-dark-ui-theme ) set-desktop-dark-ui-settings ;;
-    usddut | unset-desktop-dark-ui-theme ) unset-desktop-dark-ui-settings ;;
-    sdlan | set-desktop-left-appnavigation ) set-desktop-left-appnavigation-settings ;;
-    usdlan | unset-desktop-left-appnavigation ) unset-desktop-left-appnavigation-settings ;;
-    sdb | set-desktop-background ) set-desktop-background-settings no-lock ;;
-    sdbl | set-desktop-background-with-lock ) set-desktop-background-settings ;;
-    usdb | unset-desktop-background ) unset-desktop-background-settings ;;
-    srdf | set-rubik-as-defaultfont ) set-rubik-as-defaultfont-settings ;;
-    usrdf | unset-rubik-as-defaultfont ) unset-rubik-as-defaultfont-settings ;;
-    sa | set-add-settings ) set-add-settings ;;
-    usa | unset-add-settings ) unset-add-settings ;;
+    sau | set-auth-ui-mods ) set-auth-ui-settings; need_reboot=1 ;;
+    usau | unset-auth-ui-mods ) unset-auth-ui-settings; need_reboot=1 ;;
+    sanul | set-auth-nouserslist ) set-auth-nouserslist-settings; need_reboot=1 ;;
+    usanul | unset-auth-nouserslist ) unset-auth-nouserslist-settings; need_reboot=1 ;;
+    san | set-auth-notice ) set-auth-notice-settings $2; need_reboot=1 ;;
+    usan | unset-auth-notice ) unset-auth-notice-settings; need_reboot=1 ;;
+    sal | set-auth-logo ) set-auth-logo-settings; need_reboot=1 ;;
+    usal | unset-auth-logo ) unset-auth-logo-settings; need_reboot=1 ;;
+    sdu | set-desktop-ui-mods ) set-desktop-ui-settings; need_reboot=1 ;;
+    usdu | unset-desktop-ui-mods ) unset-desktop-ui-settings; need_reboot=1 ;;
+    sddut | set-desktop-dark-ui-theme ) set-desktop-dark-ui-settings; need_reboot=1 ;;
+    usddut | unset-desktop-dark-ui-theme ) unset-desktop-dark-ui-settings; need_reboot=1 ;;
+    sdlan | set-desktop-left-appnavigation ) set-desktop-left-appnavigation-settings; need_reboot=1 ;;
+    usdlan | unset-desktop-left-appnavigation ) unset-desktop-left-appnavigation-settings; need_reboot=1 ;;
+    sdb | set-desktop-background ) set-desktop-background-settings no-lock; need_reboot=1 ;;
+    sdbl | set-desktop-background-with-lock ) set-desktop-background-settings; need_reboot=1 ;;
+    usdb | unset-desktop-background ) unset-desktop-background-settings; need_reboot=1 ;;
+    srdf | set-rubik-as-defaultfont ) set-rubik-as-defaultfont-settings; need_reboot=1 ;;
+    usrdf | unset-rubik-as-defaultfont ) unset-rubik-as-defaultfont-settings; need_reboot=1 ;;
+    sa | set-add-settings ) set-add-settings; need_reboot=1 ;;
+    usa | unset-add-settings ) unset-add-settings; need_reboot=1 ;;
     l | list | '' ) print-options ;;
     * ) echo -e "Invalid option!\n" >&2; print-options ;;
   esac
@@ -1066,14 +1068,14 @@ function remove-prompt {
       es | edu-software ) uninstall-edu-software ;;
       cs | creative-software ) uninstall-creative-software ;;
       ps | programming-software ) uninstall-programming-software ;;
-      ose | ose-certyficate ) uninstall-ose ;;
+      ose | ose-certyficate ) uninstall-ose; need_reboot=1 ;;
       rs | remote-support ) uninstall-remote-support ;;
-      aad | add-auth ) uninstall-aad; configure-prompt unset-aad-settings ;;
-      ui | ui-mods ) uninstall-ui-mods; configure-prompt unset-auth-ui-mods; configure-prompt unset-auth-logo; configure-prompt unset-desktop-ui-mods; configure-prompt unset-desktop-background; configure-prompt unset-rubik-as-defaultfont ;;
-      ok | office-kit ) uninstall-internet-software; uninstall-office-software; uninstall-remote-support; uninstall-prompt ui-mods; configure-prompt unlock-all-settings-apps ;;
-      sk | student-kit ) uninstall-internet-software; uninstall-office-software; uninstall-edu-software; uninstall-creative-software; uninstall-programming-software; uninstall-ose; uninstall-remote-support; uninstall-prompt ui-mods; configure-prompt unlock-all-settings-apps ;;
-      tk | teacher-kit ) uninstall-internet-software; uninstall-office-software; uninstall-edu-software; uninstall-creative-software; uninstall-programming-software; uninstall-ose; uninstall-remote-support; uninstall-prompt ui-mods; configure-prompt unlock-all-settings-apps ;;
-      pk | proffesional-kit ) uninstall-internet-software; uninstall-office-software; uninstall-creative-software; uninstall-programming-software; uninstall-remote-support; uninstall-prompt ui-mods ;;
+      aad | add-auth ) uninstall-aad; configure-prompt unset-aad-settings; need_reboot=1 ;;
+      ui | ui-mods ) uninstall-ui-mods; configure-prompt unset-auth-ui-mods; configure-prompt unset-auth-logo; configure-prompt unset-desktop-ui-mods; configure-prompt unset-desktop-background; configure-prompt unset-rubik-as-defaultfont; need_reboot=1 ;;
+      ok | office-kit ) uninstall-internet-software; uninstall-office-software; uninstall-remote-support; uninstall-prompt ui-mods; configure-prompt unlock-all-settings-apps; need_reboot=1 ;;
+      sk | student-kit ) uninstall-internet-software; uninstall-office-software; uninstall-edu-software; uninstall-creative-software; uninstall-programming-software; uninstall-ose; uninstall-remote-support; uninstall-prompt ui-mods; configure-prompt unlock-all-settings-apps; need_reboot=1 ;;
+      tk | teacher-kit ) uninstall-internet-software; uninstall-office-software; uninstall-edu-software; uninstall-creative-software; uninstall-programming-software; uninstall-ose; uninstall-remote-support; uninstall-prompt ui-mods; configure-prompt unlock-all-settings-apps; need_reboot=1 ;;
+      pk | proffesional-kit ) uninstall-internet-software; uninstall-office-software; uninstall-creative-software; uninstall-programming-software; uninstall-remote-support; uninstall-prompt ui-mods; need_reboot=1 ;;
       okaad | office-kit-aad ) uninstall-prompt office-kit; uninstall-prompt aad ;;
       skaad | student-kit-aad ) uninstall-prompt student-kit; uninstall-prompt aad ;;
       tkaad | teacher-kit-aad ) uninstall-prompt teacher-kit; uninstall-prompt aad ;;

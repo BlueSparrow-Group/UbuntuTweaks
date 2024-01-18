@@ -571,13 +571,13 @@ function set-auth-logo-settings {
   if [ -f "/opt/bluesparrow/ubuntutweaks/logo.png" ]
   then
     # Change and lock Gnome authorization screen settings
-    sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display custom logo image\nblogo=\'/opt/bluesparrow/ubuntutweaks/logo.png\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo'
-    sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/banner-message-text\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo'
+    sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display custom logo image\nlogo=\'/opt/bluesparrow/ubuntutweaks/logo.png\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo'
+    sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/logo\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo'
     sudo dconf update > /dev/null
   else
     # Change and lock Gnome authorization screen settings
-    sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display custom logo image\nblogo=\'$(realpath ./resources/logo.png)\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo'
-    sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/banner-message-text\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo'
+    sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display custom logo image\nlogo=\'$(realpath ./resources/logo.png)\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo'
+    sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/logo\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo'
     sudo dconf update > /dev/null
   fi
 }
@@ -676,8 +676,8 @@ function set-rubik-as-defaultfont-settings {
   echo -e "\n= Sets Rubik as default desktop font =\n"
 
   # Change and lock Gnome desktop settings
-  sudo sh -c $'echo "[org/gnome/desktop/interface]\n\nfont-name=\'Rubik 11\'\ntitlebar-font=\'Rubik Bold 11\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont'
-  sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/desktop/interface/font-name\norg/gnome/desktop/interface/titlebar-font\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop'
+  sudo sh -c $'echo "[org/gnome/desktop/interface]\n\nfont-name=\'Rubik 11\'\n\n[org/gnome/desktop/wm/preferences]\n\ntitlebar-font=\'Rubik Bold 11\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont'
+  sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/desktop/interface/font-name\norg/gnome/desktop/wm/preferences/titlebar-font\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop'
   sudo dconf update > /dev/null
 }
 
@@ -888,7 +888,7 @@ function main-prompt {
   case "$1" in
     a | active | interactive ) interactive-prompt ;;
     i | install ) shift; install-prompt $* ;;
-    c | config | configure ) configure-prompt ;;
+    c | config | configure ) shift; configure-prompt $* ;;
     u | update ) update-software ;;
     r | remove ) shift; remove-prompt $* ;;
     su | schedule-update ) schedule-update-software ;;
@@ -1066,8 +1066,8 @@ function configure-prompt {
     usrdf | unset-rubik-as-defaultfont ) unset-rubik-as-defaultfont-settings; need_reboot=1 ;;
     sa | set-add-settings ) set-add-settings; need_reboot=1 ;;
     usa | unset-add-settings ) unset-add-settings; need_reboot=1 ;;
-    l | list | '' ) print-options ;;
-    * ) echo -e "\nInvalid option!\n" >&2; print-options ;;
+    l | list | '' ) print-config-options ;;
+    * ) echo -e "\nInvalid option!\n" >&2; print-config-options ;;
   esac
 }
 

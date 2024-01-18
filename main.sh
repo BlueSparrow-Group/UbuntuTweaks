@@ -26,7 +26,7 @@ function install-internet-software {
   echo -e "= Installing internet-software package =\n\n"
 
   # Add MS Edge repository
-  echo 'deb [signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main' | sudo tee /etc/apt-get/sources.list.d/microsoft-edge.list
+  echo 'deb [signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main' | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
   sudo /bin/bash -c "wget -O- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /usr/share/keyrings/microsoft-edge.gpg" &> /dev/null
 
   # Upate software list
@@ -36,7 +36,7 @@ function install-internet-software {
   sudo apt-get install -y microsoft-edge-stable 1> /dev/null
 
   # Downloads Zoom.us
-  sudo rm -R /tmp/zoom.deb
+  sudo rm -R /tmp/zoom.deb &> /dev/null
   sudo /bin/bash -c "wget -qO - https://zoom.us/client/5.17.1.1840/zoom_amd64.deb | tee /tmp/zoom.deb" &> /dev/null
 
   # Install Zoom.us
@@ -53,7 +53,7 @@ function uninstall-internet-software {
   echo -e "= Uninstalling internet-software package =\n\n"
 
   # Remove MS Edge repository
-  sudo rm /usr/share/keyrings/microsoft-edge.gpg
+  sudo rm /usr/share/keyrings/microsoft-edge.gpg &> /dev/null
 
   # Remove installed software
   sudo apt-get remove -y microsoft-edge-stable 1> /dev/null
@@ -124,8 +124,8 @@ function install-creative-software {
   sudo apt-get install -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio 1> /dev/null
 
   # Downloads NDI with OBS NDI addon packages
-  sudo rm -R /tmp/ndi.deb
-  sudo rm -R /tmp/obs-ndi.deb
+  sudo rm /tmp/ndi.deb &> /dev/null
+  sudo rm /tmp/obs-ndi.deb &> /dev/null
   sudo /bin/bash -c "wget -qO - https://github.com/obs-ndi/obs-ndi/releases/download/4.11.1/libndi5_5.5.3-1_amd64.deb | tee /tmp/ndi.deb" &>/dev/null
   sudo /bin/bash -c "wget -qO - https://github.com/obs-ndi/obs-ndi/releases/download/4.11.1/obs-ndi-4.11.1-linux-x86_64.deb | tee /tmp/obs-ndi.deb" &>/dev/null
 
@@ -136,7 +136,7 @@ function install-creative-software {
   sudo apt-get --fix-broken install -y 1> /dev/null
 
   # Downloads Lightworks
-  sudo rm -R /tmp/lightworks.deb
+  sudo rm /tmp/lightworks.deb &> /dev/null
   sudo /bin/bash -c "wget -qO - https://app.lwks.com/api/auth/download/lightworks/linux_deb | tee /tmp/lightworks.deb" &>/dev/null
 
   # Install Lightworks from downloaded packages
@@ -168,20 +168,20 @@ function install-programming-software {
   sudo apt-get install -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino 1> /dev/null
 
   # Add Docker repository
-  sudo install -m 0755 -d /etc/apt-get/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt-get/keyrings/docker.gpg
-  sudo chmod a+r /etc/apt-get/keyrings/docker.gpg
+  sudo install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  sudo chmod a+r /etc/apt/keyrings/docker.gpg
   echo \
-    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt-get/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
     "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-    sudo tee /etc/apt-get/sources.list.d/docker.list > /dev/null
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
   # Install Julialang
   curl -fsSL https://install.julialang.org | sh -s -- -y 1> /dev/null
 
   # Add Unity3D repository and download libssl1.1
-  sudo /bin/bash -c "wget -qO - https://hub.unity3d.com/linux/keys/public | tee /etc/apt-get/trusted.gpg.d/unityhub.asc" &>/dev/null
-  sudo /bin/bash -c 'echo "deb https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt-get/sources.list.d/unityhub.list'
+  sudo /bin/bash -c "wget -qO - https://hub.unity3d.com/linux/keys/public | tee /etc/apt/trusted.gpg.d/unityhub.asc" &>/dev/null
+  sudo /bin/bash -c 'echo "deb https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list'
   rm -R /tmp/libssl11.deb
   sudo /bin/bash -c "wget -qO - http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb | tee /tmp/libssl11.deb" &>/dev/null
 
@@ -190,8 +190,8 @@ function install-programming-software {
   sudo apt-get --fix-broken install -y 1> /dev/null
 
   # Add C# IntelliSense
-  sudo /bin/bash -c "wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt-get/trusted.gpg.d/mono-official-stable.gpg" &>/dev/null
-  echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt-get/sources.list.d/mono-official-stable.list
+  sudo /bin/bash -c "wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/mono-official-stable.gpg" &>/dev/null
+  echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
 
   # Upate software list
   sudo apt-get update 1> /dev/null
@@ -213,19 +213,19 @@ function uninstall-programming-software {
   echo -e "= Uninstalling programming-software package =\n\n"
 
   # Remove Docker repository
-  sudo rm /etc/apt-get/keyrings/docker.gpg
-  sudo rm /etc/apt-get/sources.list.d/docker.list
+  sudo rm /etc/apt/keyrings/docker.gpg
+  sudo rm /etc/apt/sources.list.d/docker.list
 
   # Remove julia
   sudo juliaup self uninstall 1> /dev/null
 
   # Remove Unity3D repository
-  sudo rm /etc/apt-get/trusted.gpg.d/unityhub.asc
-  sudo rm /etc/apt-get/sources.list.d/unityhub.list
+  sudo rm /etc/apt/trusted.gpg.d/unityhub.asc
+  sudo rm /etc/apt/sources.list.d/unityhub.list
 
   # Add C# IntelliSense
-  sudo rm /etc/apt-get/trusted.gpg.d/mono-official-stable.gpg
-  sudo rm /etc/apt-get/sources.list.d/mono-official-stable.list
+  sudo rm /etc/apt/trusted.gpg.d/mono-official-stable.gpg
+  sudo rm /etc/apt/sources.list.d/mono-official-stable.list
 
   # Remove installed software
   sudo apt-get remove -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 1> /dev/null
@@ -298,8 +298,8 @@ function install-remote-support {
   echo -e "= Installing remote-support package =\n\n"
 
   # Add Anydesk repository
-  sudo /bin/bash -c "wget -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY | sudo tee /etc/apt-get/trusted.gpg.d/anydesk.asc" &>/dev/null
-  echo "deb http://deb.anydesk.com/ all main" > /etc/apt-get/sources.list.d/anydesk-stable.list
+  sudo /bin/bash -c "wget -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY | sudo tee /etc/apt/trusted.gpg.d/anydesk.asc" &>/dev/null
+  echo "deb http://deb.anydesk.com/ all main" > /etc/apt/sources.list.d/anydesk-stable.list
 
   # Upate software list
   sudo apt-get update 1> /dev/null
@@ -308,7 +308,7 @@ function install-remote-support {
   sudo apt-get install -y anydesk 1> /dev/null
 
   # Download TeamViewer
-  rm -R /tmp/teamviewer.deb
+  rm -R /tmp/teamviewer.deb &> /dev/null
   sudo /bin/bash -c "wget -qO - https://download.teamviewer.com/download/linux/teamviewer_amd64.deb | sudo tee /tmp/teamviewer.deb" &>/dev/null
 
   # Install TeamViewer
@@ -320,8 +320,8 @@ function uninstall-remote-support {
   echo -e "= Uninstalling remote-support package =\n\n"
 
   # Remove Anydesk repository
-  sudo rm /etc/apt-get/trusted.gpg.d/anydesk.asc
-  sudo rm /etc/apt-get/sources.list.d/anydesk-stable.list
+  sudo rm /etc/apt/trusted.gpg.d/anydesk.asc &> /dev/null
+  sudo rm /etc/apt/sources.list.d/anydesk-stable.list &> /dev/null
 
   # Remove installed software
   sudo apt-get remove -y anydesk 1> /dev/null
@@ -356,7 +356,7 @@ function uninstall-aad {
   sudo apt-get autoremove 1> /dev/null
 
   # Remove AAD config
-  sudo rm /etc/aad.conf
+  sudo rm /etc/aad.conf &> /dev/null
 }
 
 # Prints auth background path (internal-use)
@@ -414,7 +414,7 @@ function install-ui-mods {
 function uninstall-ui-mods {
   echo -e "= Uninstalling ui-mods package =\n\n"
 
-  sudo rm -r ~/.local/share/gnome-shell/extensions/blur-my-shell@aunetx
+  sudo rm -r ~/.local/share/gnome-shell/extensions/blur-my-shell@aunetx &> /dev/null
 
   # Remove MacOS-like skin
   sudo mkdir whitesur;
@@ -461,7 +461,7 @@ function schedule-update-software {
 function unschedule-update-software {
   echo -e "= Unschedules weekly software update =\n\n"
 
-  sudo rm /etc/cron.d/bs-ubuntutweaks-updatesoftware
+  sudo rm /etc/cron.d/bs-ubuntutweaks-updatesoftware &> /dev/null
 }
 
 function set-general-ui-settings {
@@ -508,8 +508,8 @@ function unset-auth-ui-settings {
   echo -e "= Unsets authorization screen ui mods settings =\n\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
-  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-auth
-  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-auth
+  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-auth &> /dev/null
+  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-auth &> /dev/null
   sudo dconf update 1> /dev/null
 }
 
@@ -526,8 +526,8 @@ function unset-auth-nouserslist-settings {
   echo -e "= Reenables authorization screen userslist =\n\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
-  sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-nouserslist
-  sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-nouserslist
+  sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-nouserslist &> /dev/null
+  sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-nouserslist &> /dev/null
   sudo dconf update 1> /dev/null
 }
 
@@ -557,8 +557,8 @@ function unset-auth-notice-settings {
   echo -e "= Unsets authorization screen notice banner settings =\n\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
-  sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice
-  sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-notice
+  sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice &> /dev/null
+  sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-notice &> /dev/null
   sudo dconf update 1> /dev/null
 }
 
@@ -583,8 +583,8 @@ function unset-auth-logo-settings {
   echo -e "= Unsets authorization screen logo settings =\n\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
-  sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo
-  sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo
+  sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo &> /dev/null
+  sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo &> /dev/null
   sudo dconf update 1> /dev/null
 }
 
@@ -607,8 +607,8 @@ function unset-desktop-ui-settings {
   sudo gnome-extensions-cli disable blur-my-shell@aunetx 1> /dev/null
 
   # Reverse changes and unlock Gnome desktop settings
-  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop
-  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop
+  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop &> /dev/null
+  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop &> /dev/null
   sudo dconf update 1> /dev/null
 }
 
@@ -624,7 +624,7 @@ function unset-desktop-dark-ui-settings {
   echo -e "= Unsets desktop ui dark theme settings =\n\n"
 
   # Reverse changes and unlock Gnome desktop settings
-  sudo rm /etc/dconf/db/local.d/01-bs-ubuntutweaks-desktop-dark
+  sudo rm /etc/dconf/db/local.d/01-bs-ubuntutweaks-desktop-dark &> /dev/null
   sudo dconf update 1> /dev/null
 }
 
@@ -641,8 +641,8 @@ function unset-desktop-left-appnavigation-settings {
   echo -e "= Resets desktop applications windows navigation buttons location to right =\n\n"
 
   # Reverse changes and unlock Gnome desktop settings
-  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-left-appnavigation
-  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-left-appnavigation
+  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-left-appnavigation &> /dev/null
+  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-left-appnavigation &> /dev/null
   sudo dconf update 1> /dev/nulls
 }
 
@@ -655,7 +655,7 @@ function set-desktop-background-settings {
   then
     sudo sh -c $'echo "# Prevent changes to the following keys:\n\n/org/gnome/desktop/background/picture-uri\n/org/gnome/desktop/background/picture-options\n/org/gnome/desktop/background/primary-color\n/org/gnome/desktop/background/secondary-color\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-background'
   else
-    sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-background
+    sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-background &> /dev/null
   fi
   sudo dconf update 1> /dev/null
 }
@@ -664,8 +664,8 @@ function unset-desktop-background-settings {
   echo -e "= Unsets desktop background settings =\n\n"
 
   # Reverse changes and unlock Gnome desktop settings
-  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-background
-  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-background
+  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-background &> /dev/null
+  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop-background &> /dev/null
   sudo dconf update 1> /dev/null
 }
 
@@ -682,8 +682,8 @@ function unset-rubik-as-defaultfont-settings {
   echo -e "= Unsets Rubik as default desktop font =\n\n"
 
   # Reverse changes and unlock Gnome desktop settings
-  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont
-  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-rubik-as-defaultfont
+  sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont &> /dev/null
+  sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-rubik-as-defaultfont &> /dev/null
   sudo dconf update 1> /dev/null
 }
 
@@ -691,8 +691,8 @@ function set-aad-settings {
   echo -e "= Sets new Azure Active Directory settings =\n\n"
 
   # Change AAD settings via upload new file
-  sudo rm /etc/aad.conf
-  sudo cp ./aad.conf /etc/aad.conf
+  sudo rm /etc/aad.conf &> /dev/null
+  sudo cp ./aad.conf /etc/aad.conf &> /dev/null
 
   set-auth-nouserslist-settings
 
@@ -703,7 +703,7 @@ function unset-aad-settings {
   echo -e "= Unsets Azure Active Directory settings =\n\n"
 
   # Remove AAD settings
-  sudo rm /etc/aad.conf
+  sudo rm /etc/aad.conf &> /dev/null
 
   unset-auth-nouserslist-settings
 
@@ -820,16 +820,16 @@ function schedule-update-tweaks {
 function unschedule-update-tweaks {
   echo -e "= Unschedules tweaks utility weekly update =\n\n"
 
-  sudo rm /etc/cron.d/bs-ubuntutweaks-updateself
+  sudo rm /etc/cron.d/bs-ubuntutweaks-updateself &> /dev/null
 }
 
 function uninstall-tweaks {
   echo -e "= Uninstalling tweaks utility from system =\n\n"
 
-  sudo rm -R /var/bluesparrow/ubuntutweaks
-  sudo rm -R /opt/bluesparrow/ubuntutweaks
-  sudo rm -R /etc/cron.d/bs-ubuntutweaks-updateself
-  sudo rm -R /etc/cron.d/bs-ubuntutweaks-updatesoftware
+  sudo rm -R /var/bluesparrow/ubuntutweaks &> /dev/null
+  sudo rm -R /opt/bluesparrow/ubuntutweaks &> /dev/null
+  sudo rm -R /etc/cron.d/bs-ubuntutweaks-updateself &> /dev/null
+  sudo rm -R /etc/cron.d/bs-ubuntutweaks-updatesoftware &> /dev/null
 }
 
 function purge-tweaks {

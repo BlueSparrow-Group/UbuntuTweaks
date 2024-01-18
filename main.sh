@@ -13,7 +13,7 @@ need_reboot=0
 ## Software manipulation functions
 
 function install-general-software {
-  echo -e "= Installing common general-use dependencies =\n\n"
+  echo -e "\n= Installing common general-use dependencies =\n"
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -y gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx 1> /dev/null
@@ -23,7 +23,7 @@ function install-general-software {
 }
 
 function install-internet-software {
-  echo -e "= Installing internet-software package =\n\n"
+  echo -e "\n= Installing internet-software package =\n"
 
   # Add MS Edge repository
   echo 'deb [signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main' | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
@@ -50,7 +50,7 @@ function install-internet-software {
 }
 
 function uninstall-internet-software {
-  echo -e "= Uninstalling internet-software package =\n\n"
+  echo -e "\n= Uninstalling internet-software package =\n"
 
   # Remove MS Edge repository
   sudo rm /usr/share/keyrings/microsoft-edge.gpg &> /dev/null
@@ -67,7 +67,7 @@ function uninstall-internet-software {
 }
 
 function install-office-software {
-  echo -e "= Installing office-software package =\n\n"
+  echo -e "\n= Installing office-software package =\n"
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -y libreoffice cups cups-ipp-utils hplip printer-driver-gutenprint 1> /dev/null
@@ -87,7 +87,7 @@ function install-office-software {
 }
 
 function uninstall-office-software {
-  echo -e "= Uninstalling office-software package =\n\n"
+  echo -e "\n= Uninstalling office-software package =\n"
 
   # Remove TexStudio repository
   sudo remove-apt-repository -y ppa:sunderme/texstudio 1> /dev/null
@@ -104,21 +104,21 @@ function uninstall-office-software {
 }
 
 function install-edu-software {
-  echo -e "= Installing edu-software package =\n\n"
+  echo -e "\n= Installing edu-software package =\n"
 
   # Install software from snap
   sudo snap install teams-for-linux 1> /dev/null
 }
 
 function uninstall-edu-software {
-  echo -e "= Uninstalling edu-software package =\n\n"
+  echo -e "\n= Uninstalling edu-software package =\n"
 
   # Remove software from snap
   sudo snap remove teams-for-linux 1> /dev/null
 }
 
 function install-creative-software {
-  echo -e "= Installing creative-software package =\n\n"
+  echo -e "\n= Installing creative-software package =\n"
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio 1> /dev/null
@@ -145,7 +145,7 @@ function install-creative-software {
 }
 
 function uninstall-creative-software {
-  echo -e "= Uninstalling creative-software package =\n\n"
+  echo -e "\n= Uninstalling creative-software package =\n"
 
   # Remove installed software
   sudo apt-get remove -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio 1> /dev/null
@@ -162,7 +162,7 @@ function uninstall-creative-software {
 }
 
 function install-programming-software {
-  echo -e "= Installing programming-software package =\n\n"
+  echo -e "\n= Installing programming-software package =\n"
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino 1> /dev/null
@@ -177,12 +177,12 @@ function install-programming-software {
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
   # Install Julialang
-  curl -fsSL https://install.julialang.org | sh -s -- -y 1> /dev/null
+  sudo /bin/bash -c "curl -fsSL https://install.julialang.org | sh -s -- -y 1> /dev/null" 1> /dev/null
 
   # Add Unity3D repository and download libssl1.1
   sudo /bin/bash -c "wget -qO - https://hub.unity3d.com/linux/keys/public | tee /etc/apt/trusted.gpg.d/unityhub.asc" &>/dev/null
   sudo /bin/bash -c 'echo "deb https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list'
-  rm -R /tmp/libssl11.deb
+  rm /tmp/libssl11.deb &> /dev/null
   sudo /bin/bash -c "wget -qO - http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb | tee /tmp/libssl11.deb" &>/dev/null
 
   # Install libssl1.1 from downloaded packages
@@ -190,8 +190,8 @@ function install-programming-software {
   sudo apt-get --fix-broken install -y 1> /dev/null
 
   # Add C# IntelliSense
-  sudo /bin/bash -c "wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/mono-official-stable.gpg" &>/dev/null
-  echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+  sudo /bin/bash -c 'wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/mono-official-stable.gpg' &>/dev/null
+  sudo /bin/bash -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list' &>/dev/null
 
   # Upate software list
   sudo apt-get update 1> /dev/null
@@ -210,7 +210,7 @@ function install-programming-software {
 }
 
 function uninstall-programming-software {
-  echo -e "= Uninstalling programming-software package =\n\n"
+  echo -e "\n= Uninstalling programming-software package =\n"
 
   # Remove Docker repository
   sudo rm /etc/apt/keyrings/docker.gpg
@@ -248,18 +248,18 @@ function uninstall-programming-software {
 
 # Install OSE ceryficate
 function install-ose {
-  echo -e "= Installing ose-certyficate package =\n\n"
+  echo -e "\n= Installing ose-certyficate package =\n"
 
   sudo rm -R /tmp/ose.zip
   sudo rm -R /tmp/ose
   sudo /bin/bash -c "wget -qO - https://ose.gov.pl/media/2022/09/pliki_linux.zip | sudo tee /tmp/ose.zip" &>/dev/null
   unzip /tmp/ose.zip -d /tmp/ose 1> /dev/null
-  sudo bash /tmp/ose/cert_install/cert_install.sh 1> /dev/null
+  sudo /bin/bash -c "cd /tmp/ose/cert_install/; bash /tmp/ose/cert_install/cert_install.sh" 1> /dev/null
 }
 
 # Uninstall OSE ceryficate
 function uninstall-ose {
-  echo -e "= Uninstalling ose-certyficate package =\n\n"
+  echo -e "\n= Uninstalling ose-certyficate package =\n"
 
   # Remove certyficate from web browsers databases
   for cDB in $(sudo find /home/ -name "cert8.db")
@@ -295,7 +295,7 @@ function uninstall-ose {
 }
 
 function install-remote-support {
-  echo -e "= Installing remote-support package =\n\n"
+  echo -e "\n= Installing remote-support package =\n"
 
   # Add Anydesk repository
   sudo /bin/bash -c "wget -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY | sudo tee /etc/apt/trusted.gpg.d/anydesk.asc" &>/dev/null
@@ -317,7 +317,7 @@ function install-remote-support {
 }
 
 function uninstall-remote-support {
-  echo -e "= Uninstalling remote-support package =\n\n"
+  echo -e "\n= Uninstalling remote-support package =\n"
 
   # Remove Anydesk repository
   sudo rm /etc/apt/trusted.gpg.d/anydesk.asc &> /dev/null
@@ -337,7 +337,7 @@ function uninstall-remote-support {
 }
 
 function install-aad {
-  echo -e "= Installing aad-auth package =\n\n"
+  echo -e "\n= Installing aad-auth package =\n"
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install libpam-aad libnss-aad 1> /dev/null
@@ -347,7 +347,7 @@ function install-aad {
 }
 
 function uninstall-aad {
-  echo -e "= Uninstalling aad-auth package =\n\n"
+  echo -e "\n= Uninstalling aad-auth package =\n"
 
   # Remove installed software
   sudo apt-get remove libpam-aad libnss-aad 1> /dev/null
@@ -380,7 +380,7 @@ function get-custom-desktop-background {
 }
 
 function install-ui-mods {
-  echo -e "= Installing ui-mods package =\n\n"
+  echo -e "\n= Installing ui-mods package =\n"
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -y gnome-shell-extensions dbus-x11 1> /dev/null
@@ -391,29 +391,27 @@ function install-ui-mods {
   sudo apt-get install -y gnome-shell-extension-prefs 1> /dev/null
 
   # Install gnome extensions cli from pipx
-  pipx install gnome-extensions-cli --system-site-packages 1> /dev/null
-  pipx ensurepath
+  sudo /bin/bash -c "pipx install gnome-extensions-cli --system-site-packages" 1> /dev/null
+  sudo /bin/bash -c "pipx ensurepath" 1> /dev/null
 
   # Enable user-theme gnome extensions
-  gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com 1> /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com" 1> /dev/null
 
   # Install blur-my-shell gnome extension
-  gnome-extensions-cli install blur-my-shell@aunetx 1> /dev/null
-  gnome-extensions-cli disable blur-my-shell@aunetx 1> /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli install blur-my-shell@aunetx" 1> /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli disable blur-my-shell@aunetx" 1> /dev/null
 
   # Install MacOS-like skin
   sudo mkdir whitesur;
-  sudo git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 1> /dev/null
-  (cd whitesur; sudo ./install.sh -i ubuntu 1> /dev/null; sudo ./tweaks.sh -f monterey 1> /dev/null; sudo ./tweaks.sh -g -N -b "$(get-custom-auth-background)" 1> /dev/null;)
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; sudo ./install.sh -i ubuntu; sudo ./tweaks.sh -f monterey; sudo ./tweaks.sh -g -N -b '$(get-custom-auth-background)'" 1> /dev/null
 
   # Install MacOS-like icons
   sudo mkdir whitesur-icons;
-  sudo git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1 1> /dev/null
-  (cd whitesur-icons; sudo ./install.sh -a 1> /dev/null;)
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a" 1> /dev/null
 }
 
 function uninstall-ui-mods {
-  echo -e "= Uninstalling ui-mods package =\n\n"
+  echo -e "\n= Uninstalling ui-mods package =\n"
 
   sudo rm -r ~/.local/share/gnome-shell/extensions/blur-my-shell@aunetx &> /dev/null
 
@@ -435,7 +433,7 @@ function uninstall-ui-mods {
 }
 
 function update-software {
-  echo -e "= Updates software =\n\n"
+  echo -e "\n= Updates software =\n"
 
   # Update software list
   sudo apt-get update 1> /dev/null
@@ -448,7 +446,7 @@ function update-software {
 }
 
 function schedule-update-software {
-  echo -e "= Schedules weekly software update =\n\n"
+  echo -e "\n= Schedules weekly software update =\n"
 
   if [ -d "/var/bluesparrow/ubuntutweaks" ]
   then
@@ -460,13 +458,13 @@ function schedule-update-software {
 }
 
 function unschedule-update-software {
-  echo -e "= Unschedules weekly software update =\n\n"
+  echo -e "\n= Unschedules weekly software update =\n"
 
   sudo rm /etc/cron.d/bs-ubuntutweaks-updatesoftware &> /dev/null
 }
 
 function set-general-ui-settings {
-  echo -e "= Sets base configurations files =\n\n"
+  echo -e "\n= Sets base configurations files =\n"
 
   # Create Gnome desktop profiles
   sudo mkdir -p /etc/dconf/profile
@@ -498,7 +496,7 @@ function set-general-ui-settings {
 }
 
 function set-auth-ui-settings {
-  echo -e "= Sets authorization screen ui mods settings =\n\n"
+  echo -e "\n= Sets authorization screen ui mods settings =\n"
 
   # Change and lock Gnome authorization screen settings
   sudo sh -c $'echo "[org/gnome/desktop/screensaver]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\nlogout-enabled=true\nlock-delay=360\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
@@ -507,7 +505,7 @@ function set-auth-ui-settings {
 }
 
 function unset-auth-ui-settings {
-  echo -e "= Unsets authorization screen ui mods settings =\n\n"
+  echo -e "\n= Unsets authorization screen ui mods settings =\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-auth &> /dev/null
@@ -516,7 +514,7 @@ function unset-auth-ui-settings {
 }
 
 function set-auth-nouserslist-settings {
-  echo -e "= Disables authorization screen userslist =\n\n"
+  echo -e "\n= Disables authorization screen userslist =\n"
 
   # Change and lock Gnome authorization screen settings
   sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Do not show the user list\ndisable-user-list=true\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-nouserslist'
@@ -525,7 +523,7 @@ function set-auth-nouserslist-settings {
 }
 
 function unset-auth-nouserslist-settings {
-  echo -e "= Reenables authorization screen userslist =\n\n"
+  echo -e "\n= Reenables authorization screen userslist =\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-nouserslist &> /dev/null
@@ -534,7 +532,7 @@ function unset-auth-nouserslist-settings {
 }
 
 function set-auth-notice-settings {
-  echo -e "= Sets authorization screen notice banner settings =\n\n"
+  echo -e "\n= Sets authorization screen notice banner settings =\n"
 
   if [[ $# -eq 1 ]]
   then
@@ -556,7 +554,7 @@ function set-auth-notice-settings {
 }
 
 function unset-auth-notice-settings {
-  echo -e "= Unsets authorization screen notice banner settings =\n\n"
+  echo -e "\n= Unsets authorization screen notice banner settings =\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice &> /dev/null
@@ -565,7 +563,7 @@ function unset-auth-notice-settings {
 }
 
 function set-auth-logo-settings {
-  echo -e "= Sets authorization screen logo settings =\n\n"
+  echo -e "\n= Sets authorization screen logo settings =\n"
 
   if [ -f "/opt/bluesparrow/ubuntutweaks/logo.png" ]
   then
@@ -582,7 +580,7 @@ function set-auth-logo-settings {
 }
 
 function unset-auth-logo-settings {
-  echo -e "= Unsets authorization screen logo settings =\n\n"
+  echo -e "\n= Unsets authorization screen logo settings =\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo &> /dev/null
@@ -591,7 +589,7 @@ function unset-auth-logo-settings {
 }
 
 function set-desktop-ui-settings {
-  echo -e "= Sets desktop ui settings =\n\n"
+  echo -e "\n= Sets desktop ui settings =\n"
 
   # Enable blur-my-shell gnome extension
   gnome-extensions-cli enable blur-my-shell@aunetx 1> /dev/null
@@ -603,7 +601,7 @@ function set-desktop-ui-settings {
 }
 
 function unset-desktop-ui-settings {
-  echo -e "= Unsets desktop ui settings =\n\n"
+  echo -e "\n= Unsets desktop ui settings =\n"
 
   # Disable blur my shell
   sudo gnome-extensions-cli disable blur-my-shell@aunetx 1> /dev/null
@@ -615,7 +613,7 @@ function unset-desktop-ui-settings {
 }
 
 function set-desktop-dark-ui-settings {
-  echo -e "= Sets desktop ui dark theme settings =\n\n"
+  echo -e "\n= Sets desktop ui dark theme settings =\n"
 
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/desktop/interface]\n\ngtk-theme=\'WhiteSur-Dark\'\nicon-theme=\'WhiteSur-dark\'\n\n[org/gnome/desktop/wm/preferences]\n\ntheme=\'WhiteSur-Dark\'\n\n[org/gnome/shell/extensions/user-theme]\n\nname=\'WhiteSur-Dark\'\n">/etc/dconf/db/local.d/01-bs-ubuntutweaks-desktop-dark'
@@ -623,7 +621,7 @@ function set-desktop-dark-ui-settings {
 }
 
 function unset-desktop-dark-ui-settings {
-  echo -e "= Unsets desktop ui dark theme settings =\n\n"
+  echo -e "\n= Unsets desktop ui dark theme settings =\n"
 
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/01-bs-ubuntutweaks-desktop-dark &> /dev/null
@@ -631,7 +629,7 @@ function unset-desktop-dark-ui-settings {
 }
 
 function set-desktop-left-appnavigation-settings {
-  echo -e "= Sets desktop applications windows navigation buttons location to left =\n\n"
+  echo -e "\n= Sets desktop applications windows navigation buttons location to left =\n"
 
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/desktop/wm/preferences]\n\nbutton-layout=\'close,minimize,maximize:\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-left-appnavigation'
@@ -640,7 +638,7 @@ function set-desktop-left-appnavigation-settings {
 }
 
 function unset-desktop-left-appnavigation-settings {
-  echo -e "= Resets desktop applications windows navigation buttons location to right =\n\n"
+  echo -e "\n= Resets desktop applications windows navigation buttons location to right =\n"
 
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-left-appnavigation &> /dev/null
@@ -649,7 +647,7 @@ function unset-desktop-left-appnavigation-settings {
 }
 
 function set-desktop-background-settings {
-  echo -e "= Sets desktop background settings =\n\n"
+  echo -e "\n= Sets desktop background settings =\n"
 
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/desktop/background]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-background' -o "$(get-custom-desktop-background)"
@@ -663,7 +661,7 @@ function set-desktop-background-settings {
 }
 
 function unset-desktop-background-settings {
-  echo -e "= Unsets desktop background settings =\n\n"
+  echo -e "\n= Unsets desktop background settings =\n"
 
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop-background &> /dev/null
@@ -672,7 +670,7 @@ function unset-desktop-background-settings {
 }
 
 function set-rubik-as-defaultfont-settings {
-  echo -e "= Sets Rubik as default desktop font =\n\n"
+  echo -e "\n= Sets Rubik as default desktop font =\n"
 
   # Change and lock Gnome desktop settings
   sudo sh -c $'echo "[org/gnome/desktop/interface]\n\nfont-name=\'Rubik 11\'\ntitlebar-font=\'Rubik Bold 11\'\nmonospace-font-name=\'Rubik Mono One 13\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont'
@@ -681,7 +679,7 @@ function set-rubik-as-defaultfont-settings {
 }
 
 function unset-rubik-as-defaultfont-settings {
-  echo -e "= Unsets Rubik as default desktop font =\n\n"
+  echo -e "\n= Unsets Rubik as default desktop font =\n"
 
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-rubik-as-defaultfont &> /dev/null
@@ -690,7 +688,7 @@ function unset-rubik-as-defaultfont-settings {
 }
 
 function set-aad-settings {
-  echo -e "= Sets new Azure Active Directory settings =\n\n"
+  echo -e "\n= Sets new Azure Active Directory settings =\n"
 
   # Change AAD settings via upload new file
   sudo rm /etc/aad.conf &> /dev/null
@@ -702,7 +700,7 @@ function set-aad-settings {
 }
 
 function unset-aad-settings {
-  echo -e "= Unsets Azure Active Directory settings =\n\n"
+  echo -e "\n= Unsets Azure Active Directory settings =\n"
 
   # Remove AAD settings
   sudo rm /etc/aad.conf &> /dev/null
@@ -713,51 +711,63 @@ function unset-aad-settings {
 }
 
 function lock-all-settings-apps {
-  echo -e "= Locks all settings-apps =\n\n"
+  echo -e "\n= Locks all settings-apps =\n"
 
   # Disable access to settings app for non-admin users
   sudo chown root:sudo /usr/bin/gnome-control-center
   sudo chmod 750 /usr/bin/gnome-control-center
   sudo chown root:sudo /usr/bin/dconf-editor
   sudo chmod 750 /usr/bin/dconf-editor
-  sudo chown root:sudo /usr/bin/gnome-tweaks
-  sudo chmod 750 /usr/bin/gnome-tweaks
+  if [ -f /usr/bin/gnome-tweaks ]
+  then
+    sudo chown root:sudo /usr/bin/gnome-tweaks
+    sudo chmod 750 /usr/bin/gnome-tweaks
+  fi
 }
 
 function unlock-all-settings-apps {
-  echo -e "= Unlocks all settings-apps =\n\n"
+  echo -e "\n= Unlocks all settings-apps =\n"
 
   # Enable access to settings app for non-admin users
   sudo chown root:sudo /usr/bin/gnome-control-center
   sudo chmod 755 /usr/bin/gnome-control-center
   sudo chown root:sudo /usr/bin/dconf-editor
   sudo chmod 755 /usr/bin/dconf-editor
-  sudo chown root:sudo /usr/bin/gnome-tweaks
-  sudo chmod 755 /usr/bin/gnome-tweaks
+  if [ -f /usr/bin/gnome-tweaks ]
+  then
+    sudo chown root:sudo /usr/bin/gnome-tweaks
+    sudo chmod 755 /usr/bin/gnome-tweaks
+  fi
 }
 
 function lock-important-settings-apps {
-  echo -e "= Locks important settings-apps =\n\n"
+  echo -e "\n= Locks important settings-apps =\n"
 
   # Disable access to some settings app for non-admin users
   sudo chown root:sudo /usr/bin/dconf-editor
   sudo chmod 750 /usr/bin/dconf-editor
-  sudo chown root:sudo /usr/bin/gnome-tweaks
-  sudo chmod 750 /usr/bin/gnome-tweaks
+  if [ -f /usr/bin/gnome-tweaks ]
+  then
+    sudo chown root:sudo /usr/bin/gnome-tweaks
+    sudo chmod 750 /usr/bin/gnome-tweaks
+  fi
 }
 
 function unlock-common-settings-apps {
-  echo -e "= Unlocks common settings-apps =\n\n"
+  echo -e "\n= Unlocks common settings-apps =\n"
 
   # Enable access to some settings app for non-admin users
   sudo chown root:sudo /usr/bin/dconf-editor
   sudo chmod 755 /usr/bin/dconf-editor
-  sudo chown root:sudo /usr/bin/gnome-tweaks
-  sudo chmod 755 /usr/bin/gnome-tweaks
+  if [ -f /usr/bin/gnome-tweaks ]
+  then
+    sudo chown root:sudo /usr/bin/gnome-tweaks
+    sudo chmod 755 /usr/bin/gnome-tweaks
+  fi
 }
 
 function install-tweaks {
-  echo -e "= Installing tweaks utility into system =\n\n"
+  echo -e "\n= Installing tweaks utility into system =\n"
 
   # Check of already installed tweaks utility
   if [ -d "/var/bluesparrow/ubuntutweaks" ]
@@ -797,7 +807,7 @@ function install-tweaks {
 }
 
 function update-tweaks {
-  echo -e "= Updating tweaks utility =\n\n"
+  echo -e "\n= Updating tweaks utility =\n"
 
   # Trigger download of tweaks utility updates
   sudo bash -c $'cd /var/bluesparrow/ubuntutweaks; git pull -q origin'
@@ -808,7 +818,7 @@ function update-tweaks {
 }
 
 function schedule-update-tweaks {
-  echo -e "= Schedules tweaks utility weekly update =\n\n"
+  echo -e "\n= Schedules tweaks utility weekly update =\n"
 
   if [ -d "/var/bluesparrow/ubuntutweaks" ]
   then
@@ -820,13 +830,13 @@ function schedule-update-tweaks {
 }
 
 function unschedule-update-tweaks {
-  echo -e "= Unschedules tweaks utility weekly update =\n\n"
+  echo -e "\n= Unschedules tweaks utility weekly update =\n"
 
   sudo rm /etc/cron.d/bs-ubuntutweaks-updateself &> /dev/null
 }
 
 function uninstall-tweaks {
-  echo -e "= Uninstalling tweaks utility from system =\n\n"
+  echo -e "\n= Uninstalling tweaks utility from system =\n"
 
   sudo rm -R /var/bluesparrow/ubuntutweaks &> /dev/null
   sudo rm -R /opt/bluesparrow/ubuntutweaks &> /dev/null
@@ -863,7 +873,7 @@ function purge-tweaks {
 }
 
 function reboot-system {
-  read -p "Do you want to restart the computer to make changes effects (y/n)?: " choice
+  read -p "\nDo you want to restart the computer to make changes effects (y/n)?: " choice
   case "$choice" in
     y | Y ) sudo reboot;;
     n | N ) echo "You would need to restart the machine manualy later";;
@@ -891,7 +901,7 @@ function main-prompt {
     sus | schedule-update-self ) schedule-update-tweaks ;;
     usus | unschedule-update-self ) unchedule-update-tweaks ;;
     h | "-h" | help | "--help" | '' ) print-help ;;
-    * ) echo -e "Invalid option!\n" >&2; print-help ;;
+    * ) echo -e "\nInvalid option!\n" >&2; print-help ;;
   esac
   if [[ need_reboot -eq 1 ]]
   then
@@ -901,7 +911,8 @@ function main-prompt {
 }
 
 function print-help {
-  echo "Usage:
+  echo "
+Usage:
     bs-ubuntutweaks [command [agrugemnts]]
 
 Available commands:
@@ -922,7 +933,8 @@ Available commands:
 }
 
 function print-packages {
-  echo "Available packages:
+  echo "
+Available packages:
 - is, internet-software - Software pack contains most popular internet-browsing software (ex. MS Edge, Chromium, Spotify, Zoom.us)
 - os, office-software - Software pack contains popular office suites (LibreOffice, WPS Office and TexStudio) and printing drivers
 - es, edu-software - Software pack with educational-use applications (like MS Teams)
@@ -947,7 +959,8 @@ Available kits (with remote-support + ui-mods + automatic updates):
 }
 
 function print-config-options {
-  echo "Available configuration options:
+  echo "
+Available configuration options:
 - las, lock-all-settings-apps - Locks all settings applitactions
 - ulas, unlock-all-settings-apps - Unlocks all settings applitactions
 - lis, lock-important-settings-apps - Locks important settings applitactions (without main Settings app)
@@ -1020,7 +1033,7 @@ function install-prompt {
       tkaad-wc | teacher-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods ;;
       pkaad-wc | proffesional-kit-aad-without-config ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-ui-mods ;;
       l | list | '' ) print-packages ;;
-      * ) echo -e "Invalid option!\n" >&2; print-packages ;;
+      * ) echo -e "\nInvalid option!\n" >&2; print-packages ;;
     esac
   done
 }
@@ -1055,7 +1068,7 @@ function configure-prompt {
     sa | set-add-settings ) set-add-settings; need_reboot=1 ;;
     usa | unset-add-settings ) unset-add-settings; need_reboot=1 ;;
     l | list | '' ) print-options ;;
-    * ) echo -e "Invalid option!\n" >&2; print-options ;;
+    * ) echo -e "\nInvalid option!\n" >&2; print-options ;;
   esac
 }
 
@@ -1081,12 +1094,12 @@ function remove-prompt {
       tkaad | teacher-kit-aad ) uninstall-prompt teacher-kit; uninstall-prompt aad ;;
       pkaad | proffesional-kit-aad ) uninstall-prompt proffesional-kit; uuninstall-prompt aad ;;
       l | list | '' ) print-packages ;;
-      * ) echo -e "Invalid option!\n" >&2; print-packages ;;
+      * ) echo -e "\nInvalid option!\n" >&2; print-packages ;;
     esac
   done
 }
 
 
-echo -e "=== BlueSparrow UbuntuTweaks ===\n\n"
+echo -e "=== BlueSparrow UbuntuTweaks ===\n"
 main-prompt $*
 echo -e "\n= Bye! =\n"

@@ -20,7 +20,7 @@ function install-general-software {
   sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx > /dev/null
 
   # Initialize pipx
-  sudo /bin/bash -c "pipx ensurepath" > /dev/null
+  sudo /bin/bash -c "PIPX_HOME=/var/pipx PIPX_BIN_DIR=/usr/local/bin pipx ensurepath" > /dev/null
 
   # Install realpath if not found (bypass warning)
   sudo apt-get install -qy realpath &>/dev/null
@@ -387,7 +387,7 @@ function install-ui-mods {
   echo -e "\n= Installing ui-mods package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy gnome-shell-extensions > /dev/null
+  sudo apt-get install -qy gnome-shell-extensions dbus-x11 > /dev/null
 
   # Fix gnome-shell-extensions
   #sudo apt-get install -qy gnome-shell-extension-prefs > /dev/null
@@ -395,22 +395,22 @@ function install-ui-mods {
   #sudo apt-get install -qy gnome-shell-extension-prefs > /dev/null
 
   # Install gnome extensions cli from pipx
-  sudo /bin/bash -c "PIPX_BIN_DIR=/usr/local/bin; pipx install gnome-extensions-cli --system-site-packages"
+  sudo /bin/bash -c "PIPX_HOME=/var/pipx PIPX_BIN_DIR=/usr/local/bin pipx install gnome-extensions-cli --system-site-packages" > /dev/null
 
   # Enable user-theme gnome extensions
-  sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com"
+  sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com" > /dev/null
 
   # Install blur-my-shell gnome extension
-  sudo /bin/bash -c "gnome-extensions-cli install blur-my-shell@aunetx"
-  sudo /bin/bash -c "gnome-extensions-cli disable blur-my-shell@aunetx"
+  sudo /bin/bash -c "gnome-extensions-cli install blur-my-shell@aunetx" > /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli disable blur-my-shell@aunetx" > /dev/null
 
   # Install MacOS-like skin
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i ubuntu; ./tweaks.sh -f monterey; ./tweaks.sh -g -N -b '$(get-custom-auth-background)'"
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i ubuntu; ./tweaks.sh -f monterey; ./tweaks.sh -g -N -b '$(get-custom-auth-background)'" > /dev/null
 
   # Install MacOS-like icons
   sudo mkdir whitesur-icons;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a"
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a" > /dev/null
 }
 
 function uninstall-ui-mods {
@@ -457,6 +457,9 @@ function schedule-update-software {
     # Remove ubuntu update notification
     sudo apt-get remove -qy update-notifier > /dev/null
     sudo pkill update-notifier
+
+    # Purge dependencies
+    sudo apt-get autoremove > /dev/null
   else
     echo "Cannot schedule software weekly update due to lack of tweaks persistent installation." >&2
   fi
@@ -477,11 +480,11 @@ function set-general-ui-settings {
   sudo mkdir -p /etc/dconf/profile
   if [ ! -f "/etc/dconf/profile/user" ]
   then
-    sudo sh -c 'echo -e "user-db:user\nsystem-db:local\n">/etc/dconf/profile/user'
+    sudo sh -c 'echo "user-db:user\nsystem-db:local\n">/etc/dconf/profile/user'
   fi
   if [ ! -f "/etc/dconf/profile/gdm" ]
   then
-    sudo sh -c 'echo -e "user-db:user\nsystem-db:gdm\nfile-db:/usr/share/gdm/greeter-dconf-defaults\n">/etc/dconf/profile/gdm'
+    sudo sh -c 'echo "user-db:user\nsystem-db:gdm\nfile-db:/usr/share/gdm/greeter-dconf-defaults\n">/etc/dconf/profile/gdm'
   fi
   if [ ! -f "/usr/local/share/fonts/Rubik.ttf" ]
   then
@@ -804,7 +807,7 @@ function install-tweaks {
   # Add tweaks into shell path
   sudo touch /etc/profile.d/custom.sh
   sudo chmod +x /etc/profile.d/custom.sh
-  sudo /bin/bash -c $'echo -e "#!/bin/sh\nalias bs-ubuntutweaks=\'sudo bash /var/bluesparrow/ubuntutweaks/run.sh\'\n" > /etc/profile.d/bs-ubuntutweaks.sh' > /dev/null
+  sudo /bin/bash -c $'echo "#!/bin/sh\nalias bs-ubuntutweaks=\'sudo bash /var/bluesparrow/ubuntutweaks/run.sh\'\n" > /etc/profile.d/bs-ubuntutweaks.sh' > /dev/null
   echo "If you want to use tweaks utility without loging out and logging in again into system, you had to type \"alias bs-ubuntutweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\" in yout console"
 }
 

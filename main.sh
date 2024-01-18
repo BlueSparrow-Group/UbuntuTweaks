@@ -392,23 +392,23 @@ function install-ui-mods {
   #sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
 
   # Install gnome extensions cli from pipx
-  sudo /bin/bash -c "pipx install gnome-extensions-cli --system-site-packages" > /dev/null
-  sudo /bin/bash -c "pipx ensurepath" > /dev/null
+  sudo /bin/bash -c "pipx install gnome-extensions-cli --system-site-packages"
+  sudo /bin/bash -c "pipx ensurepath"
 
   # Enable user-theme gnome extensions
-  sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com" > /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com"
 
   # Install blur-my-shell gnome extension
-  sudo /bin/bash -c "gnome-extensions-cli install blur-my-shell@aunetx" > /dev/null
-  sudo /bin/bash -c "gnome-extensions-cli disable blur-my-shell@aunetx" > /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli install blur-my-shell@aunetx"
+  sudo /bin/bash -c "gnome-extensions-cli disable blur-my-shell@aunetx"
 
   # Install MacOS-like skin
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i ubuntu; ./tweaks.sh -f monterey; ./tweaks.sh -g -N -b '$(get-custom-auth-background)'" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i ubuntu; ./tweaks.sh -f monterey; ./tweaks.sh -g -N -b '$(get-custom-auth-background)'"
 
   # Install MacOS-like icons
   sudo mkdir whitesur-icons;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a"
 }
 
 function uninstall-ui-mods {

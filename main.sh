@@ -387,7 +387,7 @@ function install-ui-mods {
   echo -e "\n= Installing ui-mods package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy gnome-shell-extensions dbus-x11 > /dev/null
+  sudo apt-get install -qy gnome-shell-extensions > /dev/null
 
   # Fix gnome-shell-extensions
   #sudo apt-get install -qy gnome-shell-extension-prefs > /dev/null
@@ -420,13 +420,11 @@ function uninstall-ui-mods {
 
   # Remove MacOS-like skin
   sudo mkdir whitesur;
-  sudo git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 > /dev/null
-  (cd whitesur; sudo ./install.sh -r > /dev/null)
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -r" > /dev/null
 
   # Remove MacOS-like icons
   sudo mkdir whitesur-icons;
-  sudo git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1 > /dev/null
-  (cd whitesur-icons; sudo ./install.sh -r > /dev/null)
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; ./install.sh -r" > /dev/null
 
   # Remove installed software
   sudo apt-get remove -y gnome-shell-extensions > /dev/null
@@ -455,6 +453,10 @@ function schedule-update-software {
   then
     sudo touch /etc/cron.d/bs-ubuntutweaks-updatesoftware
     echo -e "0 0 * * 1 root bash /var/bluesparrow/ubuntutweaks/run.sh update" >> /etc/cron.d/bs-ubuntutweaks-updatesoftware
+
+    # Remove ubuntu update notification
+    sudo apt-get remove -qy update-notifier > /dev/null
+    sudo pkill update-notifier
   else
     echo "Cannot schedule software weekly update due to lack of tweaks persistent installation." >&2
   fi
@@ -464,6 +466,8 @@ function unschedule-update-software {
   echo -e "\n= Unschedules weekly software update =\n"
 
   sudo rm /etc/cron.d/bs-ubuntutweaks-updatesoftware &> /dev/null
+  # Remove ubuntu update notification
+  sudo apt-get install -qy update-notifier > /dev/null
 }
 
 function set-general-ui-settings {

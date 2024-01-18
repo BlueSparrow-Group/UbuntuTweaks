@@ -17,24 +17,24 @@ function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx > /dev/null
+  sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx > /dev/null
 
   # Install realpath if not found (bypass warning)
-  sudo apt-get install -y realpath &>/dev/null
+  sudo apt-get install -qy realpath &>/dev/null
 }
 
 function install-internet-software {
   echo -e "\n= Installing internet-software package =\n"
 
   # Add MS Edge repository
-  echo 'deb [signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main' | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
+  sudo /bin/bash -c "echo 'deb [signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main' | sudo tee /etc/apt/sources.list.d/microsoft-edge.list" &> /dev/null
   sudo /bin/bash -c "wget -O- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /usr/share/keyrings/microsoft-edge.gpg" &> /dev/null
 
   # Upate software list
   sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -y microsoft-edge-stable > /dev/null
+  sudo apt-get install -qy microsoft-edge-stable > /dev/null
 
   # Downloads Zoom.us
   sudo rm /tmp/zoom.deb &> /dev/null
@@ -71,7 +71,7 @@ function install-office-software {
   echo -e "\n= Installing office-software package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y libreoffice cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
+  sudo apt-get install -qy libreoffice cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
 
   # Add TexStudio repository
   sudo add-apt-repository -y ppa:sunderme/texstudio > /dev/null
@@ -80,7 +80,7 @@ function install-office-software {
   sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -y texstudio > /dev/null
+  sudo apt-get install -qy texstudio > /dev/null
 
   # Install software from snap
   sudo snap install wps-office > /dev/null
@@ -122,7 +122,7 @@ function install-creative-software {
   echo -e "\n= Installing creative-software package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio > /dev/null
+  sudo apt-get install -qy gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio > /dev/null
 
   # Downloads NDI with OBS NDI addon packages
   sudo rm /tmp/ndi.deb &> /dev/null
@@ -166,7 +166,7 @@ function install-programming-software {
   echo -e "\n= Installing programming-software package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino > /dev/null
+  sudo apt-get install -qy filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino > /dev/null
 
   # Add Docker repository
   sudo install -m 0755 -d /etc/apt/keyrings
@@ -198,7 +198,7 @@ function install-programming-software {
   sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
+  sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
 
   # Install software from snap
   sudo snap install pycharm-community --classic > /dev/null
@@ -306,7 +306,7 @@ function install-remote-support {
   sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -y anydesk > /dev/null
+  sudo apt-get install -qy anydesk > /dev/null
 
   # Download TeamViewer
   rm -R /tmp/teamviewer.deb &> /dev/null
@@ -341,7 +341,7 @@ function install-aad {
   echo -e "\n= Installing aad-auth package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install libpam-aad libnss-aad > /dev/null
+  sudo apt-get install -qy libpam-aad libnss-aad > /dev/null
 
   # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
@@ -384,12 +384,12 @@ function install-ui-mods {
   echo -e "\n= Installing ui-mods package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -y gnome-shell-extensions dbus-x11 > /dev/null
+  sudo apt-get install -qy gnome-shell-extensions dbus-x11 > /dev/null
 
   # Fix gnome-shell-extensions
-  #sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
+  #sudo apt-get install -qy gnome-shell-extension-prefs > /dev/null
   #sudo apt-get remove -y gnome-shell-extension-prefs > /dev/null
-  #sudo apt-get install -y gnome-shell-extension-prefs > /dev/null
+  #sudo apt-get install -qy gnome-shell-extension-prefs > /dev/null
 
   # Install gnome extensions cli from pipx
   sudo /bin/bash -c "pipx install gnome-extensions-cli --system-site-packages"
@@ -782,14 +782,14 @@ function install-tweaks {
   fi
 
   # Install required git software
-  sudo apt-get install -y git > /dev/null
+  sudo apt-get install -qy git > /dev/null
 
   # Create base and optional directories
   sudo mkdir -p /var/bluesparrow/ubuntutweaks
   sudo mkdir -p /opt/bluesparrow/ubuntutweaks
 
   # Clone tweaks into system
-  sudo git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks > /dev/null
+  sudo /bin/bash -c "git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks" > /dev/null
 
   # Set right scripts permissions
   sudo chmod 755 /var/bluesparrow/ubuntutweaks/run.sh
@@ -800,9 +800,9 @@ function install-tweaks {
   sudo chmod +x /etc/profile.d/custom.sh
   if [ -f "/etc/profile.d/custom.sh" ]
   then
-    sudo echo -e "\nalias bs-ubuntutweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\n" >> /etc/profile.d/custom.sh
+    sudo /bin/bash -c $'echo -e "\nalias bs-ubuntutweaks=\'sudo bash /var/bluesparrow/ubuntutweaks/run.sh\'\n" >> /etc/profile.d/custom.sh' > /dev/null
   else
-    sudo echo -e "#!/bin/sh\nalias bs-ubuntutweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\n" > /etc/profile.d/custom.sh
+    sudo /bin/bash -c $'echo -e "#!/bin/sh\nalias bs-ubuntutweaks=\'sudo bash /var/bluesparrow/ubuntutweaks/run.sh\'\n" > /etc/profile.d/custom.sh' > /dev/null
   fi
   echo "If you want to use tweaks utility without loging out and logging in again into system, you had to type \"alias bs-ubuntutweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\" in yout console"
 }

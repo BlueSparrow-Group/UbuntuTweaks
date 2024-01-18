@@ -251,8 +251,8 @@ function uninstall-programming-software {
 function install-ose {
   echo -e "\n= Installing ose-certyficate package =\n"
 
-  sudo rm -R /tmp/ose.zip
-  sudo rm -R /tmp/ose
+  sudo rm /tmp/ose.zip &> /dev/null
+  sudo rm /tmp/ose &> /dev/null
   sudo /bin/bash -c "wget -qO - https://ose.gov.pl/media/2022/09/pliki_linux.zip | sudo tee /tmp/ose.zip" &>/dev/null
   unzip /tmp/ose.zip -d /tmp/ose > /dev/null
   sudo /bin/bash -c "cd /tmp/ose/cert_install/; bash /tmp/ose/cert_install/cert_install.sh" > /dev/null

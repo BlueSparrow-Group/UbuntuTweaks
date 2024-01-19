@@ -389,20 +389,18 @@ function install-ui-mods {
   # Install software and libs from ubuntu repositories
   sudo apt-get install -qy gnome-shell-extensions dbus-x11 > /dev/null
 
-  # Fix gnome-shell-extensions
-  #sudo apt-get install -qy gnome-shell-extension-prefs > /dev/null
-  #sudo apt-get remove -y gnome-shell-extension-prefs > /dev/null
-  #sudo apt-get install -qy gnome-shell-extension-prefs > /dev/null
-
   # Install gnome extensions cli from pipx
   sudo /bin/bash -c "PIPX_HOME=/var/pipx PIPX_BIN_DIR=/usr/local/bin pipx install gnome-extensions-cli --system-site-packages" > /dev/null
 
-  # Enable user-theme gnome extensions
-  sudo /bin/bash -c "gnome-extensions-cli enable user-theme@gnome-shell-extensions.gcampax.github.com" > /dev/null
-
   # Install blur-my-shell gnome extension
-  sudo /bin/bash -c "gnome-extensions-cli install blur-my-shell@aunetx" > /dev/null
-  sudo /bin/bash -c "gnome-extensions-cli disable blur-my-shell@aunetx" > /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli -F install blur-my-shell@aunetx" > /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli -F disable blur-my-shell@aunetx" > /dev/null
+  sudo mv /root/.local/share/gnome-shell/extensions/blur-my-shell@aunetx /usr/share/gnome-shell/extensions/blur-my-shell@aunetx &> /dev/null
+
+  # Install tactile gnome extension
+  sudo /bin/bash -c "gnome-extensions-cli -F install tactile@lundal.io" > /dev/null
+  sudo /bin/bash -c "gnome-extensions-cli -F disable tactile@lundal.io" > /dev/null
+  sudo mv /root/.local/share/gnome-shell/extensions/tactile@lundal.io /usr/share/gnome-shell/extensions/tactile@lundal.io &> /dev/null
 
   # Install MacOS-like skin
   sudo mkdir whitesur;
@@ -416,7 +414,8 @@ function install-ui-mods {
 function uninstall-ui-mods {
   echo -e "\n= Uninstalling ui-mods package =\n"
 
-  sudo rm -R ~/.local/share/gnome-shell/extensions/blur-my-shell@aunetx &> /dev/null
+  sudo rm -R /usr/share/gnome-shell/extensions/blur-my-shell@aunetx &> /dev/null
+  sudo rm -R /usr/share/gnome-shell/extensions/tactile@lundal.io &> /dev/null
 
   # Remove MacOS-like skin
   sudo mkdir whitesur;
@@ -601,20 +600,14 @@ function unset-auth-logo-settings {
 function set-desktop-ui-settings {
   echo -e "\n= Sets desktop ui settings =\n"
 
-  # Enable blur-my-shell gnome extension
-  sudo /bin/bash -c "gnome-extensions-cli enable blur-my-shell@aunetx" > /dev/null
-
   # Change and lock Gnome desktop settings
-  sudo sh -c $'echo "[org/gnome/online-accounts]\n\n# Disable gnome online accounts\nwhitelisted-providers=[\'\']\n\n[com/ubuntu/SoftwareProperties]\n\nubuntu-pro-banner-visible=false\n\n[org/gnome/shell/extensions/dash-to-dock]\n\nextend-height=false\ndock-position=\'BOTTOM\'\nshow-apps-at-top=true\nautohide-in-fullscreen=true\nmulti-monitor=true\nshow-mounts=false\n\n[org/gnome/desktop/interface]\n\ngtk-theme=\'WhiteSur-Light\'\nicon-theme=\'WhiteSur-light\'\nclock-show-weekday=true\n\n[org/gnome/desktop/wm/preferences]\n\ntheme=\'WhiteSur-Light\'\n\n[org/gnome/nautilus/preferences]\n\nopen-folder-on-dnd-hover=true\n\n[org/gnome/mutter]\n\ncenter-new-windows=true\nworkspaces-only-on-primary=false\n\n[org/gnome/shell/extensions/user-theme]\n\nname=\'WhiteSur-Light\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop'
-  sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/online-accounts/whitelisted-providers\ncom/ubuntu/SoftwareProperties/ubuntu-pro-banner-visible\norg/gnome/shell/extensions/dash-to-dock/extend-height\norg/gnome/shell/extensions/dash-to-dock/dock-position\norg/gnome/shell/extensions/dash-to-dock/show-apps-at-top\norg/gnome/shell/extensions/dash-to-dock/autohide-in-fullscreen\norg/gnome/shell/extensions/dash-to-dock/multi-monitor\norg/gnome/shell/extensions/dash-to-dock/show-mounts\norg/gnome/desktop/interface/gtk-theme\norg/gnome/desktop/interface/icon-theme\norg/gnome/desktop/interface/clock-show-weekday\norg/gnome/desktop/wm/preferences/theme\norg/gnome/nautilus/preferences/open-folder-on-dnd-hover\norg/gnome/mutter/center-new-windows\norg/gnome/mutter/workspaces-only-on-primary\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop'
+  sudo sh -c $'echo "[org/gnome/online-accounts]\n\n# Disable gnome online accounts\nwhitelisted-providers=[\'\']\n\n[com/ubuntu/SoftwareProperties]\n\nubuntu-pro-banner-visible=false\n\n[org/gnome/shell/extensions/dash-to-dock]\n\nextend-height=false\ndock-position=\'BOTTOM\'\nshow-apps-at-top=true\nautohide-in-fullscreen=true\nmulti-monitor=true\nshow-mounts=false\n\n[org/gnome/desktop/interface]\n\ngtk-theme=\'WhiteSur-Light\'\nicon-theme=\'WhiteSur-light\'\nclock-show-weekday=true\nshow-battery-precentage=true\n\n[org/gnome/desktop/wm/preferences]\n\ntheme=\'WhiteSur-Light\'\n\n[org/gnome/nautilus/preferences]\n\nopen-folder-on-dnd-hover=true\n\n[org/gnome/mutter]\n\ncenter-new-windows=true\nworkspaces-only-on-primary=false\n\n[org/gnome/shell]\n\nenabled-extensions=[\'blur-my-shell@aunetx\', \'tactile@lundal.io\']\n\n[org/gnome/shell/extensions/user-theme]\n\nname=\'WhiteSur-Light\'\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop'
+  sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/online-accounts/whitelisted-providers\ncom/ubuntu/SoftwareProperties/ubuntu-pro-banner-visible\norg/gnome/shell/extensions/dash-to-dock/extend-height\norg/gnome/shell/extensions/dash-to-dock/dock-position\norg/gnome/shell/extensions/dash-to-dock/show-apps-at-top\norg/gnome/shell/extensions/dash-to-dock/autohide-in-fullscreen\norg/gnome/shell/extensions/dash-to-dock/multi-monitor\norg/gnome/shell/extensions/dash-to-dock/show-mounts\norg/gnome/desktop/interface/gtk-theme\norg/gnome/desktop/interface/icon-theme\norg/gnome/desktop/interface/clock-show-weekday\norg/gnome/desktop/interface/show-battery-precentage\norg/gnome/desktop/wm/preferences/theme\norg/gnome/nautilus/preferences/open-folder-on-dnd-hover\norg/gnome/mutter/center-new-windows\norg/gnome/mutter/workspaces-only-on-primary\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-desktop'
   sudo dconf update > /dev/nulls
 }
 
 function unset-desktop-ui-settings {
   echo -e "\n= Unsets desktop ui settings =\n"
-
-  # Disable blur my shell
-  sudo gnome-extensions-cli disable blur-my-shell@aunetx > /dev/null
 
   # Reverse changes and unlock Gnome desktop settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-desktop &> /dev/null

@@ -17,10 +17,10 @@ function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx > /dev/null
+  sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx flatpak gnome-software-plugin-flatpak libspeechd-dev > /dev/null
 
-  # Initialize pipx
-  sudo /bin/bash -c "PIPX_HOME=/var/pipx PIPX_BIN_DIR=/usr/local/bin pipx ensurepath" > /dev/null
+  # Add flatpak repository
+  flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
   # Install realpath if not found (bypass warning)
   sudo apt-get install -qy realpath &>/dev/null
@@ -387,7 +387,7 @@ function install-ui-mods {
   echo -e "\n= Installing ui-mods package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy gnome-shell-extensions dbus-x11 > /dev/null
+  sudo apt-get install -qy gnome-shell-extensions dbus-x11 plymouth-themes > /dev/null
 
   # Install gnome extensions cli from pipx
   sudo /bin/bash -c "PIPX_HOME=/var/pipx PIPX_BIN_DIR=/usr/local/bin pipx install gnome-extensions-cli --system-site-packages" > /dev/null
@@ -404,7 +404,7 @@ function install-ui-mods {
 
   # Install MacOS-like skin
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i ubuntu; ./tweaks.sh -f monterey; ./tweaks.sh -g -N -b '$(get-custom-auth-background)'" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i simple -N -t all --silent-mode; ./tweaks.sh -f monterey; ./tweaks.sh -f -g -N -b '$(get-custom-auth-background)' --silent-mode" > /dev/null
 
   # Install MacOS-like icons
   sudo mkdir whitesur-icons;
@@ -580,11 +580,25 @@ function set-auth-logo-settings {
     sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display custom logo image\nlogo=\'/opt/bluesparrow/ubuntutweaks/logo.png\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo'
     sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/logo\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo'
     sudo dconf update > /dev/null
+
+    # Change boot screen logo
+    if [ ! -f /usr/share/plymouth/themes/spinner/watermark.png.bak ]
+    then
+      sudo mv /usr/share/plymouth/themes/spinner/watermark.png /usr/share/plymouth/themes/spinner/watermark.png.bak
+      sudo cp /opt/bluesparrow/ubuntutweaks/logo.png /usr/share/plymouth/themes/spinner/watermark.png
+    fi
   else
     # Change and lock Gnome authorization screen settings
     sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display custom logo image\nlogo=\'$(realpath ./resources/logo.png)\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo'
     sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/logo\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo'
     sudo dconf update > /dev/null
+
+    # Change boot screen logo
+    if [ ! -f /usr/share/plymouth/themes/spinner/watermark.png.bak ]
+    then
+      sudo mv /usr/share/plymouth/themes/spinner/watermark.png /usr/share/plymouth/themes/spinner/watermark.png.bak
+      sudo cp $(realpath ./resources/logo.png) /usr/share/plymouth/themes/spinner/watermark.png
+    fi
   fi
 }
 
@@ -595,6 +609,13 @@ function unset-auth-logo-settings {
   sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-logo &> /dev/null
   sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-logo &> /dev/null
   sudo dconf update > /dev/null
+
+  # Restore original boot screen logo
+  if [ -f /usr/share/plymouth/themes/spinner/watermark.png.bak ]
+  then
+    sudo rm /usr/share/plymouth/themes/spinner/watermark.png &> /dev/null
+    sudo mv /usr/share/plymouth/themes/spinner/watermark.png.bak /usr/share/plymouth/themes/spinner/watermark.png
+  fi
 }
 
 function set-desktop-ui-settings {

@@ -158,7 +158,7 @@ function uninstall-creative-software {
   sudo apt-get autoremove > /dev/null
 
   # Remove NDI with OBS NDI addon
-  sudo dpkg -r ndi > /dev/null
+  sudo dpkg -r libndi5 > /dev/null
   sudo dpkg -r obs-ndi > /dev/null
 
   # Remove Lightworks

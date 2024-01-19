@@ -17,7 +17,7 @@ function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx flatpak gnome-software-plugin-flatpak libspeechd-dev > /dev/null
+  sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.0-dev libjson-glib-dev > /dev/null
 
   # Add flatpak repository
   flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -38,6 +38,11 @@ function install-internet-software {
 
   # Install software from added repositories
   sudo apt-get install -qy microsoft-edge-stable > /dev/null
+
+  # Install OneDrive client
+  sudo rm -R onedriver &> /dev/null;
+  sudo mkdir onedriver;
+  sudo /bin/bash -c "git clone https://github.com/jstaf/onedriver.git ./onedriver --depth=1; cd onedriver; make; make install" > /dev/null
 
   # Downloads Zoom.us
   sudo rm /tmp/zoom.deb &> /dev/null
@@ -61,6 +66,9 @@ function uninstall-internet-software {
 
   # Remove installed software
   sudo apt-get remove -y microsoft-edge-stable > /dev/null
+
+  # Remove OneDrive client
+  sudo dpkg -r onedriver > /dev/null
 
   # Purge dependencies
   sudo apt-get autoremove > /dev/null
@@ -403,10 +411,12 @@ function install-ui-mods {
   sudo mv /root/.local/share/gnome-shell/extensions/tactile@lundal.io /usr/share/gnome-shell/extensions/tactile@lundal.io &> /dev/null
 
   # Install MacOS-like skin
+  sudo rm -R whitesur &> /dev/null;
   sudo mkdir whitesur;
   sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i simple -N -t all --silent-mode; ./tweaks.sh -f monterey; ./tweaks.sh -f -g -N -b '$(get-custom-auth-background)' --silent-mode" > /dev/null
 
   # Install MacOS-like icons
+  sudo rm -R whitesur-icons &> /dev/null;
   sudo mkdir whitesur-icons;
   sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a" > /dev/null
 }

@@ -451,7 +451,7 @@ function schedule-update-software {
   if [ -d "/var/bluesparrow/ubuntutweaks" ]
   then
     sudo touch /etc/cron.d/bs-ubuntutweaks-updatesoftware
-    echo -e "0 0 * * 1 root bash /var/bluesparrow/ubuntutweaks/run.sh update" >> /etc/cron.d/bs-ubuntutweaks-updatesoftware
+    echo -e "0 0 * * 1 root bs-ubuntutweaks update" >> /etc/cron.d/bs-ubuntutweaks-updatesoftware
 
     # Remove ubuntu update notification
     sudo apt-get remove -qy update-notifier > /dev/null
@@ -777,8 +777,8 @@ function install-tweaks {
   then
     read -p "Found the tweaks utility catalog. Procceed anyway (y/n)?: " choice
     case "$choice" in
-      y | Y ) echo "= Reinstalling tweaks utility! =" ;;
-      n | N ) echo "You would need to restart the machine manualy later";;
+      y | Y ) echo "Reinstalling tweaks utility!" ;;
+      n | N ) echo "Skipping tweaks ulitity installation!";;
       * ) echo -e "Invalid option\n" >&2; install-tweaks; return 0 ;;
     esac
   fi
@@ -794,14 +794,13 @@ function install-tweaks {
   sudo /bin/bash -c "git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks" > /dev/null
 
   # Set right scripts permissions
-  sudo chmod 755 /var/bluesparrow/ubuntutweaks/run.sh
   sudo chmod 755 /var/bluesparrow/ubuntutweaks/main.sh
 
   # Add tweaks into shell path
-  sudo touch /etc/profile.d/custom.sh
-  sudo chmod +x /etc/profile.d/custom.sh
-  sudo /bin/bash -c $'echo "#!/bin/sh\nalias bs-ubuntutweaks=\'sudo bash /var/bluesparrow/ubuntutweaks/run.sh\'\n" > /etc/profile.d/bs-ubuntutweaks.sh' > /dev/null
-  echo "If you want to use tweaks utility without loging out and logging in again into system, you had to type \"alias bs-ubuntutweaks='sudo bash /var/bluesparrow/ubuntutweaks/run.sh'\" in yout console"
+  sudo rm /usr/local/bin/bs-ubuntutweaks &> /dev/null
+  sudo touch /usr/local/bin/bs-ubuntutweaks
+  sudo /bin/bash -c $'echo "#!/bin/bash\n\nsource /var/bluesparrow/ubuntutweaks/main.sh\n" > /usr/local/bin/bs-ubuntutweaks' > /dev/null
+  sudo chmod 755 /usr/local/bin/bs-ubuntutweaks
 }
 
 function update-tweaks {
@@ -811,7 +810,6 @@ function update-tweaks {
   sudo bash -c $'cd /var/bluesparrow/ubuntutweaks; git pull -q origin'
 
   # Set right scripts permissions
-  sudo chmod 755 /var/bluesparrow/ubuntutweaks/run.sh
   sudo chmod 755 /var/bluesparrow/ubuntutweaks/main.sh
 }
 
@@ -821,7 +819,7 @@ function schedule-update-tweaks {
   if [ -d "/var/bluesparrow/ubuntutweaks" ]
   then
     sudo touch /etc/cron.d/bs-ubuntutweaks-updateself
-    echo -e "0 0 * * 1 root bash /var/bluesparrow/ubuntutweaks/run.sh update-self" >> /etc/cron.d/bs-ubuntutweaks-updateself
+    echo -e "0 0 * * 1 root bs-ubuntutweaks update-self" >> /etc/cron.d/bs-ubuntutweaks-updateself
   else
     echo "Cannot schedule tweaks weekly update due to lack of their persistent installation." >&2
   fi
@@ -840,7 +838,7 @@ function uninstall-tweaks {
   sudo rm -R /opt/bluesparrow/ubuntutweaks &> /dev/null
   sudo rm /etc/cron.d/bs-ubuntutweaks-updateself &> /dev/null
   sudo rm /etc/cron.d/bs-ubuntutweaks-updatesoftware &> /dev/null
-  sudo rm /etc/profile.d/bs-ubuntutweaks.sh &> /dev/null
+  sudo rm /usr/local/bin/bs-ubuntutweaks &> /dev/null
 }
 
 function purge-tweaks {

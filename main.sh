@@ -23,7 +23,7 @@ function install-general-software {
   sudo apt-get install -qy realpath &>/dev/null
 
   # Remove reduant snap-store
-  sudo apt-get remove -qy snap-store > /dev/null
+  sudo apt-get remove -qy snap-store &> /dev/null
 }
 
 function install-internet-software {

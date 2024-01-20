@@ -42,7 +42,7 @@ function install-internet-software {
   # Install OneDrive client
   sudo rm -R onedriver &> /dev/null;
   sudo mkdir onedriver;
-  sudo /bin/bash -c "git clone https://github.com/jstaf/onedriver.git ./onedriver --depth=1; cd onedriver; make; make install" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/jstaf/onedriver.git ./onedriver --depth=1 -q; cd onedriver; make; make install" > /dev/null
 
   # Downloads Zoom.us
   sudo rm /tmp/zoom.deb &> /dev/null
@@ -419,12 +419,12 @@ function install-ui-mods {
   # Install MacOS-like skin
   sudo rm -R whitesur &> /dev/null;
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -i simple -N -t all --silent-mode; ./tweaks.sh -f monterey; ./tweaks.sh -f -g -N -b '$(get-custom-auth-background)' --silent-mode" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 -q; cd whitesur; ./install.sh -i simple -N -t all --silent-mode; ./tweaks.sh -f monterey; ./tweaks.sh -f -g -N -b '$(get-custom-auth-background)' --silent-mode" > /dev/null
 
   # Install MacOS-like icons
   sudo rm -R whitesur-icons &> /dev/null;
   sudo mkdir whitesur-icons;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; sudo ./install.sh -a" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1 -q; cd whitesur-icons; sudo ./install.sh -a" > /dev/null
 }
 
 function uninstall-ui-mods {
@@ -435,11 +435,11 @@ function uninstall-ui-mods {
 
   # Remove MacOS-like skin
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1; cd whitesur; ./install.sh -r" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 -q; cd whitesur; ./install.sh -r" > /dev/null
 
   # Remove MacOS-like icons
   sudo mkdir whitesur-icons;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; ./install.sh -r" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1 -q; cd whitesur-icons; ./install.sh -r" > /dev/null
 
   # Remove installed software
   sudo apt-get remove -qy gnome-shell-extensions > /dev/null
@@ -828,7 +828,7 @@ function install-tweaks {
   sudo mkdir -p /opt/bluesparrow/ubuntutweaks
 
   # Clone tweaks into system
-  sudo /bin/bash -c "git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks" > /dev/null
+  sudo /bin/bash -c "git clone -b v1 https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks -q" > /dev/null
 
   # Set right scripts permissions
   sudo chmod 755 /var/bluesparrow/ubuntutweaks/main.sh
@@ -836,7 +836,7 @@ function install-tweaks {
   # Add tweaks into shell path
   sudo rm /usr/local/bin/bs-ubuntutweaks &> /dev/null
   sudo touch /usr/local/bin/bs-ubuntutweaks
-  sudo /bin/bash -c $'echo "#!/bin/bash\n\nsource /var/bluesparrow/ubuntutweaks/main.sh\n" > /usr/local/bin/bs-ubuntutweaks' > /dev/null
+  sudo /bin/bash -c $'echo "#!/bin/bash\n\nsource /var/bluesparrow/ubuntutweaks/main.sh\n" > /usr/local/bin/bs-ubuntutweaks -q' > /dev/null
   sudo chmod 755 /usr/local/bin/bs-ubuntutweaks
 }
 
@@ -844,7 +844,18 @@ function update-tweaks {
   echo -e "\n= Updating tweaks utility =\n"
 
   # Trigger download of tweaks utility updates
-  sudo bash -c $'cd /var/bluesparrow/ubuntutweaks; git pull -q origin'
+  sudo bash -c $'cd /var/bluesparrow/ubuntutweaks; git pull origin -q'
+
+  if [ ! -z $1 ]
+  then
+    if [$(cd /var/bluesparrow/ubuntutweaks; git branch | grep -c "$1") -eq 1 ]
+    then
+      sudo bash -c "cd /var/bluesparrow/ubuntutweaks; git checkout $1 -q"
+      echo "Switched to version \"$1\""
+    else
+      echo "Cannot find version \"$1\"!" >&2
+    fi
+  fi
 
   # Set right scripts permissions
   sudo chmod 755 /var/bluesparrow/ubuntutweaks/main.sh
@@ -929,7 +940,7 @@ function main-prompt {
     su | schedule-update ) schedule-update-software ;;
     usu | unschedule-update ) unschedule-update-software ;;
     is | install-self ) install-tweaks ;;
-    us | update-self ) update-tweaks ;;
+    us | update-self ) update-tweaks $2 ;;
     rs | remove-self ) uninstall-tweaks; need_reboot=1 ;;
     ps | purge-self ) purge-tweaks; need_reboot=1 ;;
     sus | schedule-update-self ) schedule-update-tweaks ;;

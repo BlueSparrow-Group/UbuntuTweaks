@@ -96,6 +96,7 @@ function install-office-software {
   # Install software from snap
   sudo snap install wps-office > /dev/null
   sudo snap install krita > /dev/null
+  sudo snap install office365webdesktop --beta > /dev/null
 }
 
 function uninstall-office-software {
@@ -113,6 +114,7 @@ function uninstall-office-software {
   # Remove software from snap
   sudo snap remove wps-office > /dev/null
   sudo snap remove krita > /dev/null
+  sudo snap remove office365webdesktop > /dev/null
 }
 
 function install-edu-software {

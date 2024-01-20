@@ -4,9 +4,6 @@
 # Change __DIR__ to script root
 cd $(dirname $0)
 
-# Upate software list
-sudo apt-get update > /dev/null
-
 # Declare variables
 need_reboot=0
 DEBIAN_FRONTEND=noninteractive
@@ -996,7 +993,9 @@ Available kits (with remote-support + ui-mods + automatic updates):
 }
 
 function print-config-options {
-  echo "
+  echo "Important!
+  Some modifications may not work if the ui-mods package is not installed.
+
 Available configuration options:
 - las, lock-all-settings-apps - Locks all settings applitactions
 - ulas, unlock-all-settings-apps - Unlocks all settings applitactions
@@ -1027,7 +1026,7 @@ Available configuration options:
 }
 
 function interactive-prompt {
-  if [[ $1 != "no-introduce" ]]
+  if [[ $1 != "--no-introduce" ]]
   then
     echo -e "** Type commads of your choice (type exit/bye/quit/end to exit the program) **\n\n"
   fi
@@ -1036,12 +1035,20 @@ function interactive-prompt {
   if [[ choice != "bye" && choice != "exit" && choice != "quit" && choice != "end" ]]
   then
     main-prompt choice
-    interactive-prompt no-introduce
+    interactive-prompt --no-introduce
   fi
 }
 
 function install-prompt {
-  install-general-software
+  if [[ $1 != "--no-init" ]]
+  then
+    # Upate software list
+    sudo apt-get update > /dev/null
+
+    install-general-software
+  else
+    shift
+  fi
 
   for package
   do
@@ -1057,14 +1064,14 @@ function install-prompt {
       aad-wc | add-auth-without-config ) install-aad ;;
       ui | ui-mods ) install-ui-mods; configure-prompt set-auth-ui-mods; configure-prompt set-auth-logo; configure-prompt set-desktop-ui-mods; configure-prompt set-desktop-background; configure-prompt set-rubik-as-defaultfont; need_reboot=1 ;;
       ui-wc | ui-mods-without-config ) install-ui-mods ;;
-      ok | office-kit ) install-internet-software; install-office-software; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
-      sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
-      tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
-      pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt ui-mods; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
-      okaad | office-kit-aad ) install-prompt office-kit; install-aad ;;
-      skaad | student-kit-aad ) install-prompt student-kit; install-aad ;;
-      tkaad | teacher-kit-aad ) install-prompt teacher-kit; install-aad ;;
-      pkaad | proffesional-kit-aad ) install-prompt proffesional-kit; install-aad ;;
+      ok | office-kit ) install-internet-software; install-office-software; install-remote-support; install-prompt --no-init ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
+      sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt --no-init ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
+      tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt --no-init ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
+      pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt --no-init ui-mods; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
+      okaad | office-kit-aad ) install-prompt --no-init office-kit; install-aad ;;
+      skaad | student-kit-aad ) install-prompt --no-init student-kit; install-aad ;;
+      tkaad | teacher-kit-aad ) install-prompt --no-init teacher-kit; install-aad ;;
+      pkaad | proffesional-kit-aad ) install-prompt --no-init proffesional-kit; install-aad ;;
       okaad-wc | office-kit-aad-without-config ) install-internet-software; install-office-software; install-remote-support; install-ui-mods;;
       skaad-wc | student-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods ;;
       tkaad-wc | teacher-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods ;;

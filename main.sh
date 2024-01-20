@@ -17,13 +17,16 @@ function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.0-dev libjson-glib-dev > /dev/null
+  sudo apt-get install -qy gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx gnome-software gnome-software-plugin-snap flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.0-dev libjson-glib-dev > /dev/null
 
   # Add flatpak repository
-  flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
   # Install realpath if not found (bypass warning)
   sudo apt-get install -qy realpath &>/dev/null
+
+  # Remove reduant snap-store
+  sudo apt-get remove -qy snap-store > /dev/null
 }
 
 function install-internet-software {
@@ -50,7 +53,7 @@ function install-internet-software {
 
   # Install Zoom.us
   sudo dpkg -i /tmp/zoom.deb &> /dev/null
-  sudo apt-get --fix-broken install -y > /dev/null
+  sudo apt-get --fix-broken install -qy > /dev/null
 
   # Install software from snap
   sudo snap install chromium > /dev/null
@@ -65,7 +68,7 @@ function uninstall-internet-software {
   sudo rm /usr/share/keyrings/microsoft-edge.gpg &> /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y microsoft-edge-stable > /dev/null
+  sudo apt-get remove -qy microsoft-edge-stable > /dev/null
 
   # Remove OneDrive client
   sudo dpkg -r onedriver > /dev/null
@@ -85,7 +88,7 @@ function install-office-software {
   sudo apt-get install -qy libreoffice cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
 
   # Add TexStudio repository
-  sudo add-apt-repository -y ppa:sunderme/texstudio > /dev/null
+  sudo add-apt-repository -qy ppa:sunderme/texstudio > /dev/null
 
   # Upate software list
   sudo apt-get update > /dev/null
@@ -102,10 +105,10 @@ function uninstall-office-software {
   echo -e "\n= Uninstalling office-software package =\n"
 
   # Remove TexStudio repository
-  sudo remove-apt-repository -y ppa:sunderme/texstudio > /dev/null
+  sudo remove-apt-repository -qy ppa:sunderme/texstudio > /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y libreoffice texstudio cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
+  sudo apt-get remove -qy libreoffice texstudio cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
 
   # Purge dependencies
   sudo apt-get autoremove > /dev/null
@@ -120,6 +123,9 @@ function install-edu-software {
 
   # Install software from snap
   sudo snap install teams-for-linux > /dev/null
+
+  # Install OpenBoard software from flatpak
+  flatpak install flathub ch.openboard.OpenBoard
 }
 
 function uninstall-edu-software {
@@ -127,6 +133,9 @@ function uninstall-edu-software {
 
   # Remove software from snap
   sudo snap remove teams-for-linux > /dev/null
+
+  # Remove OpenBoard software from flatpak
+  flatpak uninstall ch.openboard.OpenBoard
 }
 
 function install-creative-software {
@@ -143,9 +152,9 @@ function install-creative-software {
 
   # Install NDI with OBS NDI addon from downloaded packages
   sudo dpkg -i /tmp/ndi.deb &> /dev/null
-  sudo apt-get --fix-broken install -y > /dev/null
+  sudo apt-get --fix-broken install -qy > /dev/null
   sudo dpkg -i /tmp/obs-ndi.deb &> /dev/null
-  sudo apt-get --fix-broken install -y > /dev/null
+  sudo apt-get --fix-broken install -qy > /dev/null
 
   # Downloads Lightworks
   sudo rm /tmp/lightworks.deb &> /dev/null
@@ -153,14 +162,14 @@ function install-creative-software {
 
   # Install Lightworks from downloaded packages
   sudo dpkg -i /tmp/lightworks.deb &> /dev/null
-  sudo apt-get --fix-broken install -y > /dev/null
+  sudo apt-get --fix-broken install -qy > /dev/null
 }
 
 function uninstall-creative-software {
   echo -e "\n= Uninstalling creative-software package =\n"
 
   # Remove installed software
-  sudo apt-get remove -y gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio > /dev/null
+  sudo apt-get remove -qy gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio > /dev/null
 
   # Purge dependencies
   sudo apt-get autoremove > /dev/null
@@ -199,7 +208,7 @@ function install-programming-software {
 
   # Install libssl1.1 from downloaded packages
   sudo dpkg -i /tmp/libssl11.deb &> /dev/null
-  sudo apt-get --fix-broken install -y > /dev/null
+  sudo apt-get --fix-broken install -qy > /dev/null
 
   # Add C# IntelliSense
   sudo /bin/bash -c 'wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/mono-official-stable.gpg' &>/dev/null
@@ -240,7 +249,7 @@ function uninstall-programming-software {
   sudo rm /etc/apt/sources.list.d/mono-official-stable.list
 
   # Remove installed software
-  sudo apt-get remove -y filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
+  sudo apt-get remove -qy filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
 
   # Purge dependencies
   sudo apt-get autoremove > /dev/null
@@ -300,7 +309,7 @@ function uninstall-ose {
   sudo update-ca-certificates > /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y libnss3-tools > /dev/null
+  sudo apt-get remove -qy libnss3-tools > /dev/null
 
   # Purge dependencies
   sudo apt-get autoremove > /dev/null
@@ -325,7 +334,7 @@ function install-remote-support {
 
   # Install TeamViewer
   sudo dpkg -i /tmp/teamviewer.deb &> /dev/null
-  sudo apt-get --fix-broken install -y > /dev/null
+  sudo apt-get --fix-broken install -qy > /dev/null
 }
 
 function uninstall-remote-support {
@@ -336,7 +345,7 @@ function uninstall-remote-support {
   sudo rm /etc/apt/sources.list.d/anydesk-stable.list &> /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y anydesk > /dev/null
+  sudo apt-get remove -qy anydesk > /dev/null
 
   # Purge dependencies
   sudo apt-get autoremove > /dev/null
@@ -436,7 +445,7 @@ function uninstall-ui-mods {
   sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git ./whitesur-icons --depth=1; cd whitesur-icons; ./install.sh -r" > /dev/null
 
   # Remove installed software
-  sudo apt-get remove -y gnome-shell-extensions > /dev/null
+  sudo apt-get remove -qy gnome-shell-extensions > /dev/null
 
   # Purge dependencies
   sudo apt-get autoremove > /dev/null

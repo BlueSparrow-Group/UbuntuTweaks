@@ -6,6 +6,7 @@ cd $(dirname $0)
 
 # Declare variables
 need_reboot=0
+no_reboot=0
 DEBIAN_FRONTEND=noninteractive
 
 ## Software manipulation functions
@@ -950,7 +951,7 @@ function main-prompt {
     h | "-h" | help | "--help" | '' ) print-help ;;
     * ) echo -e "\nInvalid option!\n" >&2; print-help ;;
   esac
-  if [[ need_reboot -eq 1 ]]
+  if [[ need_reboot -eq 1 && no_reboot -eq 0 ]]
   then
     reboot-system
     need_reboot=0
@@ -1156,6 +1157,12 @@ function remove-prompt {
   done
 }
 
+# Check no-restart flag
+if [[ $1 == "--no-restart" ]]
+then
+  no_restart=1
+  shift
+fi
 
 echo -e "=== BlueSparrow UbuntuTweaks ===\n"
 main-prompt $*

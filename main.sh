@@ -72,7 +72,7 @@ function uninstall-internet-software {
   sudo dpkg -r onedriver > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove > /dev/null
+  sudo apt-get autoremove -qy > /dev/null
 
   # Remove software from snap
   sudo snap remove chromium > /dev/null
@@ -110,7 +110,7 @@ function uninstall-office-software {
   sudo apt-get remove -qy libreoffice texstudio cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove > /dev/null
+  sudo apt-get autoremove -qy > /dev/null
 
   # Remove software from snap
   sudo snap remove wps-office > /dev/null
@@ -172,7 +172,7 @@ function uninstall-creative-software {
   sudo apt-get remove -qy gimp gimp-data-extras gimp-help-common inkscape inkscape-open-symbols inkscape-tutorials kdenlive blender handbrake obs-studio > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove > /dev/null
+  sudo apt-get autoremove -qy > /dev/null
 
   # Remove NDI with OBS NDI addon
   sudo dpkg -r libndi5 > /dev/null
@@ -252,7 +252,7 @@ function uninstall-programming-software {
   sudo apt-get remove -qy filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove > /dev/null
+  sudo apt-get autoremove -qy > /dev/null
 
   # Upate software list
   sudo apt-get update > /dev/null
@@ -312,7 +312,7 @@ function uninstall-ose {
   sudo apt-get remove -qy libnss3-tools > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove > /dev/null
+  sudo apt-get autoremove -qy > /dev/null
 }
 
 function install-remote-support {
@@ -374,7 +374,7 @@ function uninstall-aad {
   sudo apt-get remove libpam-aad libnss-aad > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove > /dev/null
+  sudo apt-get autoremove -qy > /dev/null
 
   # Remove AAD config
   sudo rm /etc/aad.conf &> /dev/null
@@ -448,7 +448,7 @@ function uninstall-ui-mods {
   sudo apt-get remove -qy gnome-shell-extensions > /dev/null
 
   # Purge dependencies
-  sudo apt-get autoremove > /dev/null
+  sudo apt-get autoremove -qy > /dev/null
 }
 
 function update-software {
@@ -470,14 +470,14 @@ function schedule-update-software {
   if [ -d "/var/bluesparrow/ubuntutweaks" ]
   then
     sudo touch /etc/cron.d/bs-ubuntutweaks-updatesoftware
-    echo -e "0 0 * * 1 root bs-ubuntutweaks update" >> /etc/cron.d/bs-ubuntutweaks-updatesoftware
+    echo -e "0 0 * * 1 root bs-ubuntutweaks update" | sudo tee /etc/cron.d/bs-ubuntutweaks-updatesoftware
 
     # Remove ubuntu update notification
     sudo apt-get remove -qy update-notifier > /dev/null
     sudo pkill update-notifier
 
     # Purge dependencies
-    sudo apt-get autoremove > /dev/null
+    sudo apt-get autoremove -qy > /dev/null
   else
     echo "Cannot schedule software weekly update due to lack of tweaks persistent installation." >&2
   fi
@@ -835,6 +835,7 @@ function install-tweaks {
 
   # Set right scripts permissions
   sudo chmod 755 /var/bluesparrow/ubuntutweaks/main.sh
+  sudo chmod 755 /var/bluesparrow/ubuntutweaks/run.sh
 
   # Add tweaks into shell path
   sudo rm /usr/local/bin/bs-ubuntutweaks &> /dev/null

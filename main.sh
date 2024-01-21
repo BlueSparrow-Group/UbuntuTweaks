@@ -840,7 +840,7 @@ function install-tweaks {
   # Add tweaks into shell path
   sudo rm /usr/local/bin/bs-ubuntutweaks &> /dev/null
   sudo touch /usr/local/bin/bs-ubuntutweaks
-  sudo /bin/bash -c $'echo "#!/bin/bash\n\n0=/var/bluesparrow/ubuntutweaks/main.sh\nsource /var/bluesparrow/ubuntutweaks/main.sh\n" > /usr/local/bin/bs-ubuntutweaks' > /dev/null
+  sudo /bin/bash -c $'echo "#!/bin/bash\n\n/bin/bash /var/bluesparrow/ubuntutweaks/run.sh $*\n" > /usr/local/bin/bs-ubuntutweaks' > /dev/null
   sudo chmod 755 /usr/local/bin/bs-ubuntutweaks
 }
 

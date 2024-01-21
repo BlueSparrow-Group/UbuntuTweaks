@@ -104,7 +104,7 @@ function uninstall-office-software {
   echo -e "\n= Uninstalling office-software package =\n"
 
   # Remove TexStudio repository
-  sudo remove-apt-repository -y ppa:sunderme/texstudio > /dev/null
+  sudo add-apt-repository -y --remove ppa:sunderme/texstudio > /dev/null
 
   # Remove installed software
   sudo apt-get remove -qy libreoffice texstudio cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
@@ -125,7 +125,7 @@ function install-edu-software {
   sudo snap install teams-for-linux > /dev/null
 
   # Install OpenBoard software from flatpak
-  flatpak install flathub ch.openboard.OpenBoard
+  flatpak install -y flathub ch.openboard.OpenBoard
 }
 
 function uninstall-edu-software {
@@ -135,7 +135,7 @@ function uninstall-edu-software {
   sudo snap remove teams-for-linux > /dev/null
 
   # Remove OpenBoard software from flatpak
-  flatpak uninstall ch.openboard.OpenBoard
+  flatpak uninstall -y ch.openboard.OpenBoard
 }
 
 function install-creative-software {
@@ -190,7 +190,7 @@ function install-programming-software {
 
   # Add Docker repository
   sudo install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
   sudo chmod a+r /etc/apt/keyrings/docker.gpg
   echo \
     "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
@@ -211,7 +211,7 @@ function install-programming-software {
   sudo apt-get --fix-broken install -qy > /dev/null
 
   # Add C# IntelliSense
-  sudo /bin/bash -c 'wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/mono-official-stable.gpg' &>/dev/null
+  sudo /bin/bash -c 'wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/mono-official-stable.gpg' &>/dev/null
   sudo /bin/bash -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list' &>/dev/null
 
   # Upate software list
@@ -839,7 +839,7 @@ function install-tweaks {
   # Add tweaks into shell path
   sudo rm /usr/local/bin/bs-ubuntutweaks &> /dev/null
   sudo touch /usr/local/bin/bs-ubuntutweaks
-  sudo /bin/bash -c $'echo "#!/bin/bash\n\nsource /var/bluesparrow/ubuntutweaks/main.sh\n" > /usr/local/bin/bs-ubuntutweaks' > /dev/null
+  sudo /bin/bash -c $'echo "#!/bin/bash\n\n0=/var/bluesparrow/ubuntutweaks/main.sh\nsource /var/bluesparrow/ubuntutweaks/main.sh\n" > /usr/local/bin/bs-ubuntutweaks' > /dev/null
   sudo chmod 755 /usr/local/bin/bs-ubuntutweaks
 }
 

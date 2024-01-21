@@ -15,7 +15,7 @@ function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy make cmake gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx gnome-software gnome-software-plugin-snap flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.0-dev libjson-glib-dev > /dev/null
+  sudo apt-get install -qy make cmake dconf-cli gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx gnome-software gnome-software-plugin-snap flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.0-dev libjson-glib-dev > /dev/null
 
   # Add flatpak repository
   sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo

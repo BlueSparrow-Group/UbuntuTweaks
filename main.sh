@@ -275,7 +275,7 @@ function install-ose {
   sudo rm /tmp/ose &> /dev/null
   sudo /bin/bash -c "wget -qO - https://ose.gov.pl/media/2022/09/pliki_linux.zip | sudo tee /tmp/ose.zip" &>/dev/null
   unzip /tmp/ose.zip -d /tmp/ose > /dev/null
-  sudo /bin/bash -c "cd /tmp/ose/cert_install/; bash /tmp/ose/cert_install/cert_install.sh" > /dev/null
+  sudo /bin/bash -c "cd /tmp/ose/cert_install/; /bin/bash ./cert_install.sh" > /dev/null
 }
 
 # Uninstall OSE ceryficate
@@ -527,8 +527,8 @@ function set-auth-ui-settings {
   echo -e "\n= Sets authorization screen ui mods settings =\n"
 
   # Change and lock Gnome authorization screen settings
-  sudo sh -c $'echo "[org/gnome/desktop/background]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
-  sudo sh -c $'echo "# Prevent changes to the following keys:\n\n/org/gnome/desktop/background/picture-uri\n/org/gnome/desktop/background/picture-options\n/org/gnome/desktop/background/primary-color\n/org/gnome/desktop/background/secondary-color\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth'
+  sudo sh -c $'echo "[org/gnome/desktop/background]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\n\n[com/ubuntu/login-screen]\n\nbackground-picture-uri=\'file://$1\'\nbackground-size=\'cover\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
+  sudo sh -c $'echo "# Prevent changes to the following keys:\n\n/org/gnome/desktop/background/picture-uri\n/org/gnome/desktop/background/picture-options\n/org/gnome/desktop/background/primary-color\n/org/gnome/desktop/background/secondary-color\ncom/ubuntu/login-screen/background-picture-uri\ncom/ubuntu/login-screen/background-size\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth'
   # Change and lock Gnome screensaver settings
   sudo sh -c $'echo "[org/gnome/desktop/screensaver]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\nlogout-enabled=true\nlock-delay=360\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
   sudo sh -c $'echo "# Prevent changes to the following keys:\n\n/org/gnome/desktop/screensaver/picture-uri\n/org/gnome/desktop/screensaver/picture-options\n/org/gnome/desktop/screensaver/primary-color\n/org/gnome/desktop/screensaver/secondary-color\n/org/gnome/desktop/screensaver/logout-enabled\n/org/gnome/desktop/screensaver/lock-delay\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-auth'
@@ -940,7 +940,7 @@ function purge-tweaks {
 }
 
 function reboot-system {
-  read -p "\nDo you want to restart the computer to make changes effects (y/n)?: " choice
+  read -p "Do you want to restart the computer to make changes effects (y/n)?: " choice
   case "$choice" in
     y | Y ) sudo reboot;;
     n | N ) echo "You would need to restart the machine manualy later";;

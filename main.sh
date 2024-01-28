@@ -390,6 +390,21 @@ function get-custom-auth-background {
   fi
 }
 
+# Prints auth background path (internal-use)
+function get-custom-auth-blurry-background {
+  if [ -f '/opt/bluesparrow/ubuntutweaks/bg-auth-blurry.jpg' ]
+  then
+    echo "/opt/bluesparrow/ubuntutweaks/bg-auth-blurry.jpg"
+  else
+    if [ -f '/opt/bluesparrow/ubuntutweaks/bg-auth.jpg' ]
+    then
+      echo "/opt/bluesparrow/ubuntutweaks/bg-auth.jpg"
+    else
+      echo "$(realpath ./resources/bg-auth-blurry.jpg)"
+    fi
+  fi
+}
+
 # Prints desktop background path (internal-use)
 function get-custom-desktop-background {
   if [ -f '/opt/bluesparrow/ubuntutweaks/bg-desktop.jpg' ]
@@ -422,7 +437,7 @@ function install-ui-mods {
   # Install MacOS-like skin
   sudo rm -R whitesur &> /dev/null;
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 -q; cd whitesur; ./install.sh -i simple -N glassy -t all --silent-mode; ./tweaks.sh -f monterey; ./tweaks.sh -f -g --silent-mode" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 -q; cd whitesur; ./install.sh -i simple -N glassy -t all --silent-mode; ./tweaks.sh -f monterey; ./tweaks.sh -f -g -N -b '$(get-custom-auth-background)' --silent-mode" > /dev/null
 
   # Install MacOS-like icons
   sudo rm -R whitesur-icons &> /dev/null;
@@ -527,7 +542,7 @@ function set-auth-ui-settings {
   echo -e "\n= Sets authorization screen ui mods settings =\n"
 
   # Change and lock Gnome authorization screen settings
-  sudo sh -c $'echo "[org/gnome/desktop/background]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\n\n[com/ubuntu/login-screen]\n\nbackground-picture-uri=\'file://$1\'\nbackground-size=\'cover\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
+  sudo sh -c $'echo "[org/gnome/desktop/background]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\n\n[com/ubuntu/login-screen]\n\nbackground-picture-uri=\'file://$1\'\nbackground-size=\'cover\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-blurry-background)"
   sudo sh -c $'echo "# Prevent changes to the following keys:\n\n/org/gnome/desktop/background/picture-uri\n/org/gnome/desktop/background/picture-options\n/org/gnome/desktop/background/primary-color\n/org/gnome/desktop/background/secondary-color\ncom/ubuntu/login-screen/background-picture-uri\ncom/ubuntu/login-screen/background-size\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth'
   # Change and lock Gnome screensaver settings
   sudo sh -c $'echo "[org/gnome/desktop/screensaver]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\nlogout-enabled=true\nlock-delay=360\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
@@ -573,7 +588,7 @@ function set-auth-notice-settings {
   if [[ $# -ge 1 ]]
   then
     # Change and lock Gnome authorization screen settings
-    sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display text message banner\nbanner-message-enable=true\nbanner-message-text=\'$1\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice' -o $*
+    sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display text message banner\nbanner-message-enable=true\nbanner-message-text=\'$*\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice' -o $*
     sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/banner-message-enable\norg/gnome/login-screen/banner-message-text\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-notice'
     sudo dconf update > /dev/null
   else

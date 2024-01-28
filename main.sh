@@ -980,7 +980,7 @@ function main-prompt {
 function print-help {
   echo "
 Usage:
-    bs-ubuntutweaks [command [agrugemnts]]
+    bs-ubuntutweaks [--no-reboot] [command [agrugemnts]]
 
 Available commands:
 - a, active, interactive - Runs utility in interactive(continous input) mode
@@ -996,7 +996,9 @@ Available commands:
 - ps, purge-self - Removes tweaks utility from system along with all its related software and settings
 - sus, schedule-update-self - Schedules weekly tweaks utility updates
 - usus, unschedule-update-self - Unschedules weekly tweaks utility updates
-- h, -h, help, --help - Prints this help"
+- h, -h, help, --help - Prints this help
+
+When in use with --no-reboot flag it does not prompt for machine restart"
 }
 
 function print-packages {
@@ -1179,7 +1181,7 @@ function remove-prompt {
 # Check no-restart flag
 if [[ $1 == "--no-restart" ]]
 then
-  no_restart=1
+  no_reboot=1
   shift
 fi
 

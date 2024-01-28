@@ -738,12 +738,22 @@ function unset-rubik-as-defaultfont-settings {
   sudo dconf update > /dev/null
 }
 
+# Prints desktop background path (internal-use)
+function get-custom-aad-config {
+  if [ -f '/opt/bluesparrow/ubuntutweaks/aad.conf' ]
+  then
+    echo "/opt/bluesparrow/ubuntutweaks/aad.conf"
+  else
+    echo "$(realpath ./aad.conf)"
+  fi
+}
+
 function set-aad-settings {
   echo -e "\n= Sets new Azure Active Directory settings =\n"
 
   # Change AAD settings via upload new file
   sudo rm /etc/aad.conf &> /dev/null
-  sudo cp ./aad.conf /etc/aad.conf &> /dev/null
+  sudo cp $(get-custom-aad-config) /etc/aad.conf &> /dev/null
 
   set-auth-nouserslist-settings
 

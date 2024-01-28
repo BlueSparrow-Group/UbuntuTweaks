@@ -320,7 +320,7 @@ function install-remote-support {
 
   # Add Anydesk repository
   sudo /bin/bash -c "wget -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY | sudo tee /etc/apt/trusted.gpg.d/anydesk.asc" &>/dev/null
-  echo "deb http://deb.anydesk.com/ all main" > /etc/apt/sources.list.d/anydesk-stable.list
+  echo "deb http://deb.anydesk.com/ all main" | sudo tee /etc/apt/sources.list.d/anydesk-stable.list
 
   # Upate software list
   sudo apt-get update > /dev/null
@@ -361,7 +361,7 @@ function install-aad {
   echo -e "\n= Installing aad-auth package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy libpam-aad libnss-aad > /dev/null
+  sudo apt-get install -qy libpam-aad libnss-aad aad-cli > /dev/null
 
   # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
@@ -422,7 +422,7 @@ function install-ui-mods {
   # Install MacOS-like skin
   sudo rm -R whitesur &> /dev/null;
   sudo mkdir whitesur;
-  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 -q; cd whitesur; ./install.sh -i simple -N -t all --silent-mode; ./tweaks.sh -f monterey; ./tweaks.sh -f -g -N -b '$(get-custom-auth-background)' --silent-mode" > /dev/null
+  sudo /bin/bash -c "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git ./whitesur --depth=1 -q; cd whitesur; ./install.sh -i simple -N glassy -t all --silent-mode; ./tweaks.sh -f monterey; ./tweaks.sh -f -g --silent-mode" > /dev/null
 
   # Install MacOS-like icons
   sudo rm -R whitesur-icons &> /dev/null;
@@ -527,8 +527,12 @@ function set-auth-ui-settings {
   echo -e "\n= Sets authorization screen ui mods settings =\n"
 
   # Change and lock Gnome authorization screen settings
+  sudo sh -c $'echo "[org/gnome/desktop/background]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
+  sudo sh -c $'echo "# Prevent changes to the following keys:\n\n/org/gnome/desktop/background/picture-uri\n/org/gnome/desktop/background/picture-options\n/org/gnome/desktop/background/primary-color\n/org/gnome/desktop/background/secondary-color\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth'
+  # Change and lock Gnome screensaver settings
   sudo sh -c $'echo "[org/gnome/desktop/screensaver]\n\n# URI to use for the background image\npicture-uri=\'file://$1\'\n\n# Specify one of the rendering options for the background image:\npicture-options=\'zoom\'\n\n# Specify the left or top color when drawing gradients, or the solid color\nprimary-color=\'2E405D\'\n\n# Specify the right or bottom color when drawing gradients\nsecondary-color=\'DFEAF7\'\nlogout-enabled=true\nlock-delay=360\n">/etc/dconf/db/local.d/00-bs-ubuntutweaks-auth' -o "$(get-custom-auth-background)"
   sudo sh -c $'echo "# Prevent changes to the following keys:\n\n/org/gnome/desktop/screensaver/picture-uri\n/org/gnome/desktop/screensaver/picture-options\n/org/gnome/desktop/screensaver/primary-color\n/org/gnome/desktop/screensaver/secondary-color\n/org/gnome/desktop/screensaver/logout-enabled\n/org/gnome/desktop/screensaver/lock-delay\n">/etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-auth'
+
   sudo dconf update > /dev/null
 }
 
@@ -536,8 +540,12 @@ function unset-auth-ui-settings {
   echo -e "\n= Unsets authorization screen ui mods settings =\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
+  sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth &> /dev/null
+  sudo rm /etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth &> /dev/null
+  # Reverse changes and unlock Gnome screensaver settings
   sudo rm /etc/dconf/db/local.d/00-bs-ubuntutweaks-auth &> /dev/null
   sudo rm /etc/dconf/db/local.d/locks/00-bs-ubuntutweaks-auth &> /dev/null
+
   sudo dconf update > /dev/null
 }
 
@@ -562,10 +570,10 @@ function unset-auth-nouserslist-settings {
 function set-auth-notice-settings {
   echo -e "\n= Sets authorization screen notice banner settings =\n"
 
-  if [[ $# -eq 1 ]]
+  if [[ $# -ge 1 ]]
   then
     # Change and lock Gnome authorization screen settings
-    sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display text message banner\nbanner-message-enable=true\nbanner-message-text=\'$1\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice' -o $1
+    sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Display text message banner\nbanner-message-enable=true\nbanner-message-text=\'$1\'\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-notice' -o $*
     sudo sh -c $'echo "# Prevent changes to the following keys:\n\norg/gnome/login-screen/banner-message-enable\norg/gnome/login-screen/banner-message-text\n">/etc/dconf/db/gdm.d/locks/00-bs-ubuntutweaks-auth-notice'
     sudo dconf update > /dev/null
   else
@@ -1109,7 +1117,7 @@ function configure-prompt {
     usau | unset-auth-ui-mods ) unset-auth-ui-settings; need_reboot=1 ;;
     sanul | set-auth-nouserslist ) set-auth-nouserslist-settings; need_reboot=1 ;;
     usanul | unset-auth-nouserslist ) unset-auth-nouserslist-settings; need_reboot=1 ;;
-    san | set-auth-notice ) set-auth-notice-settings $2; need_reboot=1 ;;
+    san | set-auth-notice ) shift; set-auth-notice-settings $*; need_reboot=1 ;;
     usan | unset-auth-notice ) unset-auth-notice-settings; need_reboot=1 ;;
     sal | set-auth-logo ) set-auth-logo-settings; need_reboot=1 ;;
     usal | unset-auth-logo ) unset-auth-logo-settings; need_reboot=1 ;;
@@ -1124,8 +1132,8 @@ function configure-prompt {
     usdb | unset-desktop-background ) unset-desktop-background-settings; need_reboot=1 ;;
     srdf | set-rubik-as-defaultfont ) set-rubik-as-defaultfont-settings; need_reboot=1 ;;
     usrdf | unset-rubik-as-defaultfont ) unset-rubik-as-defaultfont-settings; need_reboot=1 ;;
-    sa | set-add-settings ) set-add-settings; need_reboot=1 ;;
-    usa | unset-add-settings ) unset-add-settings; need_reboot=1 ;;
+    sa | set-aad-settings ) set-aad-settings; need_reboot=1 ;;
+    usa | unset-aad-settings ) unset-aad-settings; need_reboot=1 ;;
     l | list | '' ) print-config-options ;;
     * ) echo -e "\nInvalid option!\n" >&2; print-config-options ;;
   esac

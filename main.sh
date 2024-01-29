@@ -753,11 +753,11 @@ function unset-rubik-as-defaultfont-settings {
   sudo dconf update > /dev/null
 }
 
-# Prints desktop background path (internal-use)
+# Prints AAD configuration path (internal-use)
 function get-custom-aad-config {
   if [ -f '/opt/bluesparrow/ubuntutweaks/aad.conf' ]
   then
-    echo "/opt/bluesparrow/ubuntutweaks/aad.conf"
+    echo '/opt/bluesparrow/ubuntutweaks/aad.conf'
   else
     echo "$(realpath ./aad.conf)"
   fi
@@ -873,7 +873,7 @@ function install-tweaks {
   # Add tweaks into shell path
   sudo rm /usr/local/bin/bs-ubuntutweaks &> /dev/null
   sudo touch /usr/local/bin/bs-ubuntutweaks
-  sudo /bin/bash -c $'echo $\'#!/bin/bash\n\n/bin/bash /var/bluesparrow/ubuntutweaks/run.sh $*\n" > /usr/local/bin/bs-ubuntutweaks\'' > /dev/null
+  sudo /bin/bash -c $'echo "#!/bin/bash\n\n/bin/bash /var/bluesparrow/ubuntutweaks/run.sh \$*\n" > /usr/local/bin/bs-ubuntutweaks' > /dev/null
   sudo chmod 755 /usr/local/bin/bs-ubuntutweaks
 }
 

@@ -1118,14 +1118,14 @@ function install-prompt {
       sk | student-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt --no-init ui-mods; configure-prompt set-desktop-background-with-lock; configure-prompt lock-all-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
       tk | teacher-kit ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-prompt --no-init ui-mods; configure-prompt lock-important-settings-apps; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
       pk | proffesional-kit ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-prompt --no-init ui-mods; schedule-update-software; schedule-update-tweaks; update-software; need_reboot=1 ;;
-      okaad | office-kit-aad ) install-prompt --no-init office-kit; install-aad ;;
-      skaad | student-kit-aad ) install-prompt --no-init student-kit; install-aad ;;
-      tkaad | teacher-kit-aad ) install-prompt --no-init teacher-kit; install-aad ;;
-      pkaad | proffesional-kit-aad ) install-prompt --no-init proffesional-kit; install-aad ;;
-      okaad-wc | office-kit-aad-without-config ) install-internet-software; install-office-software; install-remote-support; install-ui-mods;;
-      skaad-wc | student-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods ;;
-      tkaad-wc | teacher-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods ;;
-      pkaad-wc | proffesional-kit-aad-without-config ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-ui-mods ;;
+      okaad | office-kit-aad ) install-prompt --no-init office-kit; install-prompt --no-init aad ;;
+      skaad | student-kit-aad ) install-prompt --no-init student-kit; install-prompt --no-init aad ;;
+      tkaad | teacher-kit-aad ) install-prompt --no-init teacher-kit; install-prompt --no-init aad ;;
+      pkaad | proffesional-kit-aad ) install-prompt --no-init proffesional-kit; install-prompt --no-init aad ;;
+      okaad-wc | office-kit-aad-without-config ) install-internet-software; install-office-software; install-remote-support; install-ui-mods; install-aad ;;
+      skaad-wc | student-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods; install-aad ;;
+      tkaad-wc | teacher-kit-aad-without-config ) install-internet-software; install-office-software; install-edu-software; install-creative-software; install-programming-software; install-ose; install-remote-support; install-ui-mods; install-aad ;;
+      pkaad-wc | proffesional-kit-aad-without-config ) install-internet-software; install-office-software; install-creative-software; install-programming-software; install-remote-support; install-ui-mods; install-aad ;;
       l | list | '' ) print-packages ;;
       * ) echo -e "\nInvalid option!\n" >&2; print-packages ;;
     esac

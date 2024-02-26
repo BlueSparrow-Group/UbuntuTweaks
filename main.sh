@@ -125,15 +125,15 @@ function uninstall-office-software {
 function install-edu-software {
   echo -e "\n= Installing edu-software package =\n"
 
-  # Add QGIS repository
-  sudo /bin/bash -c "echo -e 'Types: deb deb-src\nURIs: https://qgis.org/ubuntu\nSuites: $(lsb_release -cs)\nArchitectures: amd64\nComponents: main\nSigned-By: /usr/share/keyrings/qgis-archive-keyring.gpg\n' | sudo tee /etc/apt/sources.list.d/qgis.sources" &> /dev/null
-  sudo /bin/bash -c "wget -O- https://download.qgis.org/downloads/qgis-archive-keyring.gpg | gpg --dearmor | tee /usr/share/keyrings/qgis-archive-keyring.gpg" &> /dev/null
+  # Remove QGIS repository
+  sudo rm /etc/apt/sources.list.d/qgis.sources &> /dev/null
+  sudo rm /usr/share/keyrings/qgis-archive-keyring.gpg &> /dev/null
 
   # Upate software list
   sudo apt-get update > /dev/null
 
-  # Install software from added repositories
-  sudo apt-get install -qy qgis qgis-plugin-grass qgis-server > /dev/null
+  # Install software from ubuntu repositories
+  sudo apt-get install -qy qgis qgis-plugin-grass qgis-server python3-qgis > /dev/null
 
   # Install software from snap
   sudo snap install teams-for-linux > /dev/null

@@ -63,6 +63,7 @@ function uninstall-internet-software {
   echo -e "\n= Uninstalling internet-software package =\n"
 
   # Remove MS Edge repository
+  sudo rm /etc/apt/sources.list.d/microsoft-edge.list &> /dev/null
   sudo rm /usr/share/keyrings/microsoft-edge.gpg &> /dev/null
 
   # Remove installed software
@@ -73,6 +74,9 @@ function uninstall-internet-software {
 
   # Purge dependencies
   sudo apt-get autoremove -qy > /dev/null
+
+  # Upate software list
+  sudo apt-get update > /dev/null
 
   # Remove software from snap
   sudo snap remove chromium > /dev/null
@@ -121,6 +125,16 @@ function uninstall-office-software {
 function install-edu-software {
   echo -e "\n= Installing edu-software package =\n"
 
+  # Add QGIS repository
+  sudo /bin/bash -c $'echo -e "Types: deb deb-src\nURIs: https://qgis.org/debian\nSuites: your-distributions-codename\nArchitectures: amd64\nComponents: main\nSigned-By: /etc/apt/keyrings/qgis-archive-keyring.gpg\n" | sudo tee /etc/apt/sources.list.d/qgis.sources' &> /dev/null
+  sudo /bin/bash -c "wget -O- https://download.qgis.org/downloads/qgis-archive-keyring.gpg | gpg --dearmor | tee /usr/share/keyrings/qgis-archive-keyring.gpg" &> /dev/null
+
+  # Upate software list
+  sudo apt-get update > /dev/null
+
+  # Install software from added repositories
+  sudo apt-get install -qy qgis qgis-plugin-grass qgis-server > /dev/null
+
   # Install software from snap
   sudo snap install teams-for-linux > /dev/null
 
@@ -130,6 +144,19 @@ function install-edu-software {
 
 function uninstall-edu-software {
   echo -e "\n= Uninstalling edu-software package =\n"
+
+  # Remove QGIS repository
+  sudo rm /etc/apt/sources.list.d/qgis.sources &> /dev/null
+  sudo rm /usr/share/keyrings/qgis-archive-keyring.gpg &> /dev/null
+
+  # Remove installed software
+  sudo apt-get remove -qy qgis qgis-plugin-grass qgis-server > /dev/null
+
+  # Purge dependencies
+  sudo apt-get autoremove -qy > /dev/null
+
+  # Upate software list
+  sudo apt-get update > /dev/null
 
   # Remove software from snap
   sudo snap remove teams-for-linux > /dev/null

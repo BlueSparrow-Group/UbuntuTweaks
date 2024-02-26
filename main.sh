@@ -126,7 +126,7 @@ function install-edu-software {
   echo -e "\n= Installing edu-software package =\n"
 
   # Add QGIS repository
-  sudo /bin/bash -c "echo -e 'Types: deb deb-src\nURIs: https://qgis.org/ubuntu\nSuites: $(lsb_release -cs)\nArchitectures: amd64\nComponents: main\nSigned-By: /etc/apt/keyrings/qgis-archive-keyring.gpg\n' | sudo tee /etc/apt/sources.list.d/qgis.sources" &> /dev/null
+  sudo /bin/bash -c "echo -e 'Types: deb deb-src\nURIs: https://qgis.org/ubuntu\nSuites: $(lsb_release -cs)\nArchitectures: amd64\nComponents: main\nSigned-By: /usr/share/keyrings/qgis-archive-keyring.gpg\n' | sudo tee /etc/apt/sources.list.d/qgis.sources" &> /dev/null
   sudo /bin/bash -c "wget -O- https://download.qgis.org/downloads/qgis-archive-keyring.gpg | gpg --dearmor | tee /usr/share/keyrings/qgis-archive-keyring.gpg" &> /dev/null
 
   # Upate software list

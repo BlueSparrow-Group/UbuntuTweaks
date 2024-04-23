@@ -87,7 +87,7 @@ function install-office-software {
   echo -e "\n= Installing office-software package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy libreoffice cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
+  sudo apt-get install -qy libreoffice libreoffice-l10n-pl libreoffice-help-pl cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
 
   # Add TexStudio repository
   sudo add-apt-repository -y ppa:sunderme/texstudio > /dev/null

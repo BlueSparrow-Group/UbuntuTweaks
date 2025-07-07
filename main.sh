@@ -239,7 +239,7 @@ function install-programming-software {
   sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
 
   # Install Julialang
-  sudo /bin/bash -c "curl -fsSL https://install.julialang.org | sh -s -- -y" > /dev/null
+  curl -fsSL https://install.julialang.org | sudo bash -s -- -y > /dev/null 2>&1
 
   # Add Unity3D repository and download libssl1.1
   sudo /bin/bash -c "wget -qO - https://hub.unity3d.com/linux/keys/public | tee /etc/apt/trusted.gpg.d/unityhub.asc" &>/dev/null

@@ -171,7 +171,7 @@ function uninstall-edu-software {
   sudo snap remove teams-for-linux > /dev/null
 
   # Remove OpenBoard software from flatpak
-  flatpak uninstall -y ch.openboard.OpenBoard
+  flatpak uninstall -qy ch.openboard.OpenBoard
 }
 
 function install-creative-software {

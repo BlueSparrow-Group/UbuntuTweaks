@@ -18,6 +18,7 @@ function install-general-software {
   sudo apt install flatpak
   sudo add-apt-repository universe
   sudo apt update
+  hash -r
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -qy make cmake dconf-cli gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx gnome-software gnome-software-plugin-snap flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.0-dev libjson-glib-dev > /dev/null
@@ -46,9 +47,7 @@ function install-internet-software {
   sudo apt-get install -qy microsoft-edge-stable > /dev/null
 
 # Install build dependencies
-  sudo apt-get install -qy \
-    cmake g++ libcurl4-openssl-dev libsqlite3-dev libglib2.0-dev \
-    libnotify-dev libsecret-1-dev libjson-glib-dev pkg-config git make > /dev/null
+  sudo apt-get install -qy cmake g++ libcurl4-openssl-dev libsqlite3-dev libglib2.0-dev libnotify-dev libsecret-1-dev libjson-glib-dev pkg-config git make > /dev/null
 
 # Clone and build onedriver
   sudo rm -rf onedriver &> /dev/null

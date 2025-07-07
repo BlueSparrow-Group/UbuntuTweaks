@@ -13,6 +13,11 @@ DEBIAN_FRONTEND=noninteractive
 
 function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
+  sudo apt update
+  sudo apt install software-properties-common
+  sudo apt install flatpak
+  sudo add-apt-repository universe
+  sudo apt update
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -qy make cmake dconf-cli gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx gnome-software gnome-software-plugin-snap flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.0-dev libjson-glib-dev > /dev/null
@@ -88,7 +93,7 @@ function install-office-software {
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -qy libreoffice libreoffice-l10n-pl libreoffice-help-pl cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
-
+  sudo apt-get purge libreoffice* -qy
   # Add TexStudio repository
   sudo add-apt-repository -y ppa:sunderme/texstudio > /dev/null
 
@@ -112,7 +117,8 @@ function uninstall-office-software {
 
   # Remove installed software
   sudo apt-get remove -qy libreoffice texstudio cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
-
+  # Remove all packets connected to LibreOffice
+  sudo apt-get purge libreoffice* -qy
   # Purge dependencies
   sudo apt-get autoremove -qy > /dev/null
 
@@ -220,9 +226,14 @@ function install-programming-software {
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
   sudo chmod a+r /etc/apt/keyrings/docker.gpg
   echo \
-    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+  sudo apt-get update > /dev/null
+
+  # Install Docker
+  sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
 
   # Install Julialang
   sudo /bin/bash -c "curl -fsSL https://install.julialang.org | sh -s -- -y" > /dev/null
@@ -260,38 +271,28 @@ function install-programming-software {
 function uninstall-programming-software {
   echo -e "\n= Uninstalling programming-software package =\n"
 
-  # Remove Docker repository
-  sudo rm /etc/apt/keyrings/docker.gpg
-  sudo rm /etc/apt/sources.list.d/docker.list
+  # Remove Docker, Unity3D, Mono repositories
+  sudo rm -f /etc/apt/keyrings/docker.gpg
+  sudo rm -f /etc/apt/sources.list.d/docker.list
+  sudo rm -f /etc/apt/trusted.gpg.d/unityhub.asc
+  sudo rm -f /etc/apt/sources.list.d/unityhub.list
+  sudo rm -f /etc/apt/trusted.gpg.d/mono-official-stable.gpg
+  sudo rm -f /etc/apt/sources.list.d/mono-official-stable.list
 
-  # Remove julia
-  sudo juliaup self uninstall > /dev/null
-
-  # Remove Unity3D repository
-  sudo rm /etc/apt/trusted.gpg.d/unityhub.asc
-  sudo rm /etc/apt/sources.list.d/unityhub.list
-
-  # Add C# IntelliSense
-  sudo rm /etc/apt/trusted.gpg.d/mono-official-stable.gpg
-  sudo rm /etc/apt/sources.list.d/mono-official-stable.list
+  # Remove Julia
+  sudo juliaup self uninstall &> /dev/null || echo "Julia not found"
 
   # Remove installed software
-  sudo apt-get remove -qy filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
+  sudo apt-get remove -qy filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli mono-complete dotnet6 > /dev/null
 
-  # Purge dependencies
+  # Purge dependencies and update
   sudo apt-get autoremove -qy > /dev/null
+  sudo apt-get update -qy > /dev/null
 
-  # Upate software list
-  sudo apt-get update > /dev/null
-
-  # Remove software from snap
-  sudo snap remove pycharm-community --classic > /dev/null
-  sudo snap remove intellij-idea-community --classic > /dev/null
-  sudo snap remove code --classic > /dev/null
-  sudo snap remove brackets --classic > /dev/null
-  sudo snap remove flutter --classic > /dev/null
-  sudo snap remove kate --classic > /dev/null
-  sudo snap remove go --classic > /dev/null
+  # Remove snaps
+  for snap in pycharm-community intellij-idea-community code brackets flutter kate go; do
+    sudo snap remove "$snap" || echo "Snap '$snap' not installed"
+  done
 }
 
 # Install OSE ceryficate
@@ -1109,7 +1110,7 @@ function interactive-prompt {
   fi
 
   read -p "> " choice
-  if [[ choice != "bye" && choice != "exit" && choice != "quit" && choice != "end" ]]
+  if [[ $choice != "bye" && $choice != "exit" && $choice != "quit" && $choice != "end" ]]
   then
     main-prompt choice
     interactive-prompt --no-introduce

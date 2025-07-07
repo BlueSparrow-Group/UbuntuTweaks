@@ -45,12 +45,20 @@ function install-internet-software {
   # Install software from added repositories
   sudo apt-get install -qy microsoft-edge-stable > /dev/null
 
-  # Install OneDrive client
-  sudo rm -R onedriver &> /dev/null;
-  sudo mkdir onedriver;
-  sudo /bin/bash -c "git clone https://github.com/jstaf/onedriver.git ./onedriver --depth=1 -q; cd onedriver; make; make install" > /dev/null
+# Install build dependencies
+  sudo apt-get install -qy \
+    cmake g++ libcurl4-openssl-dev libsqlite3-dev libglib2.0-dev \
+    libnotify-dev libsecret-1-dev libjson-glib-dev pkg-config git make > /dev/null
 
-  # Downloads Zoom.us
+# Clone and build onedriver
+  sudo rm -rf onedriver &> /dev/null
+  git clone https://github.com/jstaf/onedriver.git ./onedriver --depth=1 -q
+  (
+    cd onedriver
+    make
+    sudo make install
+  )
+# Downloads Zoom.us
   sudo rm /tmp/zoom.deb &> /dev/null
   sudo /bin/bash -c "wget -qO - https://zoom.us/client/5.17.1.1840/zoom_amd64.deb | tee /tmp/zoom.deb" &> /dev/null
 

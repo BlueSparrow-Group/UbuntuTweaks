@@ -902,7 +902,7 @@ function install-tweaks {
   sudo mkdir -p /opt/bluesparrow/ubuntutweaks
 
   # Clone tweaks into system
-  sudo /bin/bash -c "git clone -b dev https://gitlab.com/bluesparrow/ubuntutweaks.git /var/bluesparrow/ubuntutweaks -q" > /dev/null
+  sudo /bin/bash -c "git clone -b dev https://github.com/BlueSparrow-Group/UbuntuTweaks.git /var/bluesparrow/ubuntutweaks -q" > /dev/null
 
   # Set right scripts permissions
   sudo chmod 755 /var/bluesparrow/ubuntutweaks/main.sh

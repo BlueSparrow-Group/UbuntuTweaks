@@ -17,11 +17,14 @@ function install-general-software {
   sudo apt install software-properties-common
   sudo apt install flatpak
   sudo add-apt-repository universe
+  sudo add-apt-repository main
+  sudo add-apt-repository restricted
+  sudo add-apt-repository multiverse
   sudo apt update
   hash -r
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy make cmake dconf-cli gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx gnome-software gnome-software-plugin-snap flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.0-dev libjson-glib-dev > /dev/null
+  sudo apt-get install -qy make cmake dconf-cli gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx gnome-software gnome-software-plugin-snap flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.1-dev libjson-glib-dev > /dev/null
 
   # Add flatpak repository
   sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo

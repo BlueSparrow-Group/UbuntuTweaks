@@ -76,7 +76,10 @@ function uninstall-internet-software {
   sudo apt-get remove -qy microsoft-edge-stable > /dev/null
 
   # Remove OneDrive client
-  sudo dpkg -r onedriver > /dev/null
+  onedriver_path=$(command -v onedriver)
+  if [ -n "$onedriver_path" ]; then
+    sudo rm "$onedriver_path"
+  fi
 
   # Purge dependencies
   sudo apt-get autoremove -qy > /dev/null
@@ -256,7 +259,7 @@ function install-programming-software {
   sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet6 > /dev/null
+  sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete sudo apt install -y dotnet-sdk-6.0 > /dev/null
 
   # Install software from snap
   sudo snap install pycharm-community --classic > /dev/null

@@ -14,12 +14,7 @@ DEBIAN_FRONTEND=noninteractive
 function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
   sudo apt update
-  sudo apt install software-properties-common
-  sudo apt install flatpak
-  sudo add-apt-repository universe
-  sudo add-apt-repository main
-  sudo add-apt-repository restricted
-  sudo add-apt-repository multiverse
+  sudo apt install -qy software-properties-common flatpak universe main restricted multiverse &>/dev/null
   sudo apt update
   hash -r
 
@@ -54,12 +49,8 @@ function install-internet-software {
 
 # Clone and build onedriver
   sudo rm -rf onedriver &> /dev/null
-  git clone https://github.com/jstaf/onedriver.git ./onedriver --depth=1 -q
-  (
-    cd onedriver
-    make
-    sudo make install
-  )
+  sudo /bin/bash -c "git clone https://github.com/jstaf/onedriver.git ./onedriver --depth=1 -q; cd onedriver; make; make install" > /dev/null
+
 # Downloads Zoom.us
   sudo rm /tmp/zoom.deb &> /dev/null
   sudo /bin/bash -c "wget -qO - https://zoom.us/client/5.17.1.1840/zoom_amd64.deb | tee /tmp/zoom.deb" &> /dev/null
@@ -103,7 +94,6 @@ function install-office-software {
 
   # Install software and libs from ubuntu repositories
   sudo apt-get install -qy libreoffice libreoffice-l10n-pl libreoffice-help-pl cups cups-ipp-utils hplip printer-driver-gutenprint > /dev/null
-  sudo apt-get purge libreoffice* -qy
   # Add TexStudio repository
   sudo add-apt-repository -y ppa:sunderme/texstudio > /dev/null
 

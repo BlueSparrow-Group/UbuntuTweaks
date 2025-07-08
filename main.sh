@@ -241,8 +241,14 @@ function install-programming-software {
   # Install Docker
   sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
 
-  # Install Julialang
-  curl -fsSL https://install.julialang.org | sudo bash -s -- -y > /dev/null 2>&1
+  # Remove old versions of Julia
+  rm -rf ~/.julia ~/.juliaup
+
+  # Install Julia
+  curl -fsSL https://install.julialang.org | bash -s -- -y > /dev/null 2>&1
+
+  # Reload shell config to update PATH
+  source ~/.bashrc
 
   # Add Unity3D repository and download libssl1.1
   sudo /bin/bash -c "wget -qO - https://hub.unity3d.com/linux/keys/public | tee /etc/apt/trusted.gpg.d/unityhub.asc" &>/dev/null
@@ -257,6 +263,11 @@ function install-programming-software {
   # Add C# IntelliSense
   sudo /bin/bash -c 'wget -O - "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xA6A19B38D3D831EF" | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/mono-official-stable.gpg' &>/dev/null
   sudo /bin/bash -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list' &>/dev/null
+
+ # Add Microsoft repository for dotnet
+  wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+  sudo dpkg -i packages-microsoft-prod.deb
+  rm packages-microsoft-prod.deb
 
   # Upate software list
   sudo apt-get update > /dev/null
@@ -286,7 +297,7 @@ function uninstall-programming-software {
   sudo rm -f /etc/apt/sources.list.d/mono-official-stable.list
 
   # Remove Julia
-  sudo juliaup self uninstall &> /dev/null || echo "Julia not found"
+  juliaup self uninstall &> /dev/null || echo "Julia not found"
 
   # Remove installed software
   sudo apt-get remove -qy filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli mono-complete dotnet6 > /dev/null

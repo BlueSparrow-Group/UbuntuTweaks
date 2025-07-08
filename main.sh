@@ -298,6 +298,7 @@ function uninstall-programming-software {
 
   # Remove Julia
   juliaup self uninstall &> /dev/null || echo "Julia not found"
+  rm -rf ~/.julia ~/.juliaup
 
   # Remove installed software
   sudo apt-get remove -qy filezilla codeblocks codeblocks-common codeblocks-contrib codeblocks-dev libcodeblocks0 thonny arduino docker-ce docker-ce-cli mono-complete dotnet6 > /dev/null

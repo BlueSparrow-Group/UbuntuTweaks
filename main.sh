@@ -407,23 +407,25 @@ function install-aad {
   echo -e "\n= Installing aad-auth package =\n"
 
   # Install software and libs from ubuntu repositories
-  sudo apt-get install -qy libpam-aad libnss-aad aad-cli > /dev/null
+  sudo apt-get update -qy
+  sudo apt-get install -qy sssd libpam-sss libnss-sss
 
   # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
+  sudo systemctl restart sssd
 }
 
 function uninstall-aad {
   echo -e "\n= Uninstalling aad-auth package =\n"
 
   # Remove installed software
-  sudo apt-get remove libpam-aad libnss-aad > /dev/null
+  sudo apt-get remove --purge -qy sssd libpam-sss libnss-sss
 
   # Purge dependencies
   sudo apt-get autoremove -qy > /dev/null
 
   # Remove AAD config
-  sudo rm /etc/aad.conf &> /dev/null
+  sudo rm /etc/sssd/sssd.conf &> /dev/null
 }
 
 # Prints auth background path (internal-use)
@@ -611,7 +613,7 @@ function unset-auth-ui-settings {
 }
 
 function set-auth-nouserslist-settings {
-  echo -e "\n= Disables authorization screen userslist =\n"
+  echo -e "\n= Disable authorization screen userslist =\n"
 
   # Change and lock Gnome authorization screen settings
   sudo sh -c $'echo "[org/gnome/login-screen]\n\n# Do not show the user list\ndisable-user-list=true\n">/etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-nouserslist'
@@ -620,7 +622,7 @@ function set-auth-nouserslist-settings {
 }
 
 function unset-auth-nouserslist-settings {
-  echo -e "\n= Reenables authorization screen userslist =\n"
+  echo -e "\n= Enable authorization screen userslist =\n"
 
   # Reverse changes and unlock Gnome authorization screen settings
   sudo rm /etc/dconf/db/gdm.d/00-bs-ubuntutweaks-auth-nouserslist &> /dev/null
@@ -801,20 +803,21 @@ function unset-rubik-as-defaultfont-settings {
 
 # Prints AAD configuration path (internal-use)
 function get-custom-aad-config {
-  if [ -f '/opt/bluesparrow/ubuntutweaks/aad.conf' ]
+  if [ -f '/opt/bluesparrow/ubuntutweaks/sssd.conf' ]
   then
-    echo '/opt/bluesparrow/ubuntutweaks/aad.conf'
+    echo '/opt/bluesparrow/ubuntutweaks/sssd.conf'
   else
-    echo "$(realpath ./aad.conf)"
+    echo "$(realpath ./sssd.conf)"
   fi
 }
 
 function set-aad-settings {
   echo -e "\n= Sets new Azure Active Directory settings =\n"
 
-  # Change AAD settings via upload new file
-  sudo rm /etc/aad.conf &> /dev/null
-  sudo cp $(get-custom-aad-config) /etc/aad.conf &> /dev/null
+  # Change SSSD settings via upload new file
+  sudo rm /etc/sssd/sssd.conf &> /dev/null
+  sudo cp $(get-custom-aad-config) /etc/sssd/sssd.conf &> /dev/null
+  sudo systemctl restart sssd
 
   set-auth-nouserslist-settings
 
@@ -824,9 +827,9 @@ function set-aad-settings {
 function unset-aad-settings {
   echo -e "\n= Unsets Azure Active Directory settings =\n"
 
-  # Remove AAD settings
-  sudo rm /etc/aad.conf &> /dev/null
-
+  # Remove SSSD settings
+  sudo rm -f /etc/sssd/sssd.conf
+  
   unset-auth-nouserslist-settings
 
   need_reboot=1

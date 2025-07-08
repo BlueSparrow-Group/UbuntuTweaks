@@ -171,7 +171,7 @@ function uninstall-edu-software {
   sudo snap remove teams-for-linux > /dev/null
 
   # Remove OpenBoard software from flatpak
-  flatpak uninstall -qy ch.openboard.OpenBoard
+  flatpak uninstall -y ch.openboard.OpenBoard
 }
 
 function install-creative-software {
@@ -234,6 +234,9 @@ function install-programming-software {
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
   sudo apt-get update > /dev/null
+
+  # Configure dpkg to not get interupted
+  sudo dpkg --configure -a
 
   # Install Docker
   sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null

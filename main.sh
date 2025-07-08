@@ -267,13 +267,13 @@ function install-programming-software {
  # Add Microsoft repository for dotnet
   wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
   sudo dpkg -i packages-microsoft-prod.deb
-  rm packages-microsoft-prod.deb
+  sudo rm packages-microsoft-prod.deb
 
   # Upate software list
   sudo apt-get update > /dev/null
 
   # Install software from added repositories
-  sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete sudo apt install -y dotnet-sdk-6.0 > /dev/null
+  sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin unityhub mono-complete dotnet-sdk-8.0 > /dev/null
 
   # Install software from snap
   sudo snap install pycharm-community --classic > /dev/null

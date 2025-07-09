@@ -810,6 +810,19 @@ function get-custom-aad-config {
   fi
 }
 
+function join-aad-realm {
+  local REALM_NAME="$1"
+  local ADMIN_USER="$2"
+
+  echo -e "\n= Joining domain $REALM_NAME ="
+
+  if realm list | grep -qi "$REALM_NAME"; then
+    echo "Already joined to domain $REALM_NAME"
+  else
+    sudo realm join "$REALM_NAME" --user="$ADMIN_USER"
+  fi
+}
+
 function set-aad-settings {
   echo -e "\n= Sets new Azure Active Directory settings =\n"
 
@@ -1219,6 +1232,7 @@ function configure-prompt {
     usdb | unset-desktop-background ) unset-desktop-background-settings; need_reboot=1 ;;
     srdf | set-rubik-as-defaultfont ) set-rubik-as-defaultfont-settings; need_reboot=1 ;;
     usrdf | unset-rubik-as-defaultfont ) unset-rubik-as-defaultfont-settings; need_reboot=1 ;;
+    jaadr | join-aad-realm ) join-aad-realm; need_reboot=1 ;;
     sa | set-aad-settings ) set-aad-settings; need_reboot=1 ;;
     usa | unset-aad-settings ) unset-aad-settings; need_reboot=1 ;;
     l | list | '' ) print-config-options ;;

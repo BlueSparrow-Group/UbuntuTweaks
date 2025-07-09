@@ -412,11 +412,6 @@ function install-aad {
 
   # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
-
-  # Correct perms and owner
-  sudo chown root:root /etc/sssd/sssd.conf
-  sudo chmod 600 /etc/sssd/sssd.conf
-  sudo systemctl restart sssd
 }
 
 function uninstall-aad {
@@ -821,6 +816,10 @@ function set-aad-settings {
   # Change SSSD settings via upload new file
   sudo rm /etc/sssd/sssd.conf &> /dev/null
   sudo cp $(get-custom-aad-config) /etc/sssd/sssd.conf &> /dev/null
+  
+  # Correct perms and owner
+  sudo chown root:root /etc/sssd/sssd.conf
+  sudo chmod 600 /etc/sssd/sssd.conf
   sudo systemctl restart sssd
 
   set-auth-nouserslist-settings

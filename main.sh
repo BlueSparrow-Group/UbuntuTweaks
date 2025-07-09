@@ -811,11 +811,12 @@ function get-custom-aad-config {
 }
 
 function join-aad-realm {
-  local REALM_NAME="$1"
-  local ADMIN_USER="$2"
-
   echo -e "\n= Joining domain $REALM_NAME ="
 
+  # Get realm name and admin
+  source "$./aad-settings.conf"
+
+  # Join realm
   if realm list | grep -qi "$REALM_NAME"; then
     echo "Already joined to domain $REALM_NAME"
   else
@@ -851,9 +852,12 @@ function set-aad-settings {
 function unset-aad-settings {
   echo -e "\n= Unsets Azure Active Directory settings =\n"
 
+  # Leave realm
+  sudo realm leave
+
   # Remove SSSD settings
   sudo rm -f /etc/sssd/sssd.conf
-  
+
   unset-auth-nouserslist-settings
 
   need_reboot=1
@@ -1183,7 +1187,7 @@ function install-prompt {
       ps | programming-software ) install-programming-software ;;
       ose | ose-certyficate ) install-ose; need_reboot=1 ;;
       rs | remote-support ) install-remote-support ;;
-      aad | add-auth ) install-aad; configure-prompt set-aad-settings; need_reboot=1 ;;
+      aad | add-auth ) install-aad; join-aad-realm; configure-prompt set-aad-settings; need_reboot=1 ;;
       aad-wc | add-auth-without-config ) install-aad ;;
       ui | ui-mods ) install-ui-mods; configure-prompt set-auth-ui-mods; configure-prompt set-auth-logo; configure-prompt set-desktop-ui-mods; configure-prompt set-desktop-background; configure-prompt set-rubik-as-defaultfont; need_reboot=1 ;;
       ui-wc | ui-mods-without-config ) install-ui-mods ;;
@@ -1232,7 +1236,6 @@ function configure-prompt {
     usdb | unset-desktop-background ) unset-desktop-background-settings; need_reboot=1 ;;
     srdf | set-rubik-as-defaultfont ) set-rubik-as-defaultfont-settings; need_reboot=1 ;;
     usrdf | unset-rubik-as-defaultfont ) unset-rubik-as-defaultfont-settings; need_reboot=1 ;;
-    jaadr | join-aad-realm ) join-aad-realm; need_reboot=1 ;;
     sa | set-aad-settings ) set-aad-settings; need_reboot=1 ;;
     usa | unset-aad-settings ) unset-aad-settings; need_reboot=1 ;;
     l | list | '' ) print-config-options ;;

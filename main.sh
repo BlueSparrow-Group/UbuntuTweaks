@@ -811,10 +811,10 @@ function get-custom-aad-config {
 }
 
 function join-aad-realm {
-  echo -e "\n= Joining domain $REALM_NAME ="
+  echo -e "\n= Joining domain $REALM_NAME =\n"
 
   # Get realm name and admin
-  source "$./aad-settings.conf"
+  source "/var/bluesparrow/ubuntutweaks/aad-settings.conf"
 
   # Join realm
   if realm list | grep -qi "$REALM_NAME"; then

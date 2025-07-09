@@ -412,6 +412,10 @@ function install-aad {
 
   # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
+
+  # Correct perms and owner
+  sudo chown root:root /etc/sssd/sssd.conf
+  sudo chmod 600 /etc/sssd/sssd.conf
   sudo systemctl restart sssd
 }
 

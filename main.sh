@@ -408,7 +408,7 @@ function install-aad {
 
   # Install software and libs from ubuntu repositories
   sudo apt-get update -qy
-  sudo apt-get install -qy sssd libpam-sss libnss-sss
+  sudo apt-get install -qy realmd sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit libnss-sss libpam-sss > /dev/null
 
   # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
@@ -418,7 +418,7 @@ function uninstall-aad {
   echo -e "\n= Uninstalling aad-auth package =\n"
 
   # Remove installed software
-  sudo apt-get remove --purge -qy sssd libpam-sss libnss-sss
+  sudo apt-get remove --purge -qy realmd sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit libnss-sss libpam-sss
 
   # Purge dependencies
   sudo apt-get autoremove -qy > /dev/null
@@ -820,6 +820,14 @@ function set-aad-settings {
   # Correct perms and owner
   sudo chown root:root /etc/sssd/sssd.conf
   sudo chmod 600 /etc/sssd/sssd.conf
+
+  # Join domain if not already joined
+  if ! realm list | grep -q 'realm-name'; then
+    sudo realm join realm-name --user=adminuser
+  else
+    echo "System already joined to realm."
+  fi
+
   sudo systemctl restart sssd
 
   set-auth-nouserslist-settings

@@ -404,14 +404,11 @@ function uninstall-remote-support {
 }
 
 function install-aad {
-  echo -e "\n= Installing aad-auth package =\n"
+  echo -e "\n= Installing packages for AAD DS integration =\n"
 
-  # Install software and libs from ubuntu repositories
   sudo apt-get update -qy
-  sudo apt-get install -qy sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit libsss-nss-idmap libnss-sss libpam-sss libsss-sudo
- > /dev/null
+  sudo apt-get install -y realmd sssd libnss-sss libpam-sss adcli samba-common krb5-user packagekit
 
-  # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
 }
 
@@ -419,7 +416,8 @@ function uninstall-aad {
   echo -e "\n= Uninstalling aad-auth package =\n"
 
   # Remove installed software
-  sudo apt-get remove --purge -qy realmd sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit libsss-nss-idmap libnss-sss libpam-sss libsss-sudo
+  sudo apt-get remove --purge -qy azure-cli aadlogin
+  sudo apt-get autoremove -qy > /dev/null
 
   # Purge dependencies
   sudo apt-get autoremove -qy > /dev/null
@@ -801,35 +799,36 @@ function unset-rubik-as-defaultfont-settings {
   sudo dconf update > /dev/null
 }
 
-# Prints AAD configuration path (internal-use)
-function get-custom-aad-config {
-  if [ -f '/opt/bluesparrow/ubuntutweaks/sssd.conf' ]
-  then
-    echo '/opt/bluesparrow/ubuntutweaks/sssd.conf'
-  else
-    echo "$(realpath ./sssd.conf)"
-  fi
-}
+# # Prints AAD configuration path (internal-use)
+# function get-custom-aad-config {
+#   if [ -f '/opt/bluesparrow/ubuntutweaks/sssd.conf' ]
+#   then
+#     echo '/opt/bluesparrow/ubuntutweaks/sssd.conf'
+#   else
+#     echo "$(realpath ./sssd.conf)"
+#   fi
+# }
 
 function set-aad-settings {
-  echo -e "\n= Sets new Azure Active Directory settings =\n"
+  echo -e "\n= Sets new Azure AD Domain Services settings =\n"
 
-  # Change SSSD settings via upload new file
   sudo rm /etc/sssd/sssd.conf &> /dev/null
   sudo cp $(get-custom-aad-config) /etc/sssd/sssd.conf &> /dev/null
-  
-  # Correct perms and owner
   sudo chown root:root /etc/sssd/sssd.conf
   sudo chmod 600 /etc/sssd/sssd.conf
 
-  # Join domain if not already joined
-  if ! realm list | grep -q 'realm-name'; then
-    sudo realm join realm-name --user=adminuser
+  source "/var/bluesparrow/ubuntutweaks/aad-settings.conf"
+
+  # Join AAD DS domain
+  if ! realm list | grep -q "$REALM_NAME"; then
+    sudo realm join "$REALM_NAME" --user="$ADMIN_USER"
   else
-    echo "System already joined to realm."
+    echo "Already joined to realm $REALM_NAME."
   fi
 
   sudo systemctl restart sssd
+
+  sudo pam-auth-update --enable mkhomedir
 
   set-auth-nouserslist-settings
 

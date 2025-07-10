@@ -408,7 +408,8 @@ function install-aad {
 
   # Install software and libs from ubuntu repositories
   sudo apt-get update -qy
-  sudo apt-get install -qy realmd sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit libnss-sss libpam-sss > /dev/null
+  sudo apt-get install -qy sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit libsss-nss-idmap libnss-sss libpam-sss libsss-sudo
+ > /dev/null
 
   # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
@@ -418,7 +419,7 @@ function uninstall-aad {
   echo -e "\n= Uninstalling aad-auth package =\n"
 
   # Remove installed software
-  sudo apt-get remove --purge -qy realmd sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit libnss-sss libpam-sss
+  sudo apt-get remove --purge -qy realmd sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit libsss-nss-idmap libnss-sss libpam-sss libsss-sudo
 
   # Purge dependencies
   sudo apt-get autoremove -qy > /dev/null
@@ -810,20 +811,6 @@ function get-custom-aad-config {
   fi
 }
 
-function join-aad-realm {
-  echo -e "\n= Joining domain $REALM_NAME =\n"
-
-  # Get realm name and admin
-  source "/var/bluesparrow/ubuntutweaks/aad-settings.conf"
-
-  # Join realm
-  if realm list | grep -qi "$REALM_NAME"; then
-    echo "Already joined to domain $REALM_NAME"
-  else
-    sudo realm join "$REALM_NAME" --user="$ADMIN_USER"
-  fi
-}
-
 function set-aad-settings {
   echo -e "\n= Sets new Azure Active Directory settings =\n"
 
@@ -1187,7 +1174,7 @@ function install-prompt {
       ps | programming-software ) install-programming-software ;;
       ose | ose-certyficate ) install-ose; need_reboot=1 ;;
       rs | remote-support ) install-remote-support ;;
-      aad | add-auth ) install-aad; join-aad-realm; configure-prompt set-aad-settings; need_reboot=1 ;;
+      aad | add-auth ) install-aad; configure-prompt set-aad-settings; need_reboot=1 ;;
       aad-wc | add-auth-without-config ) install-aad ;;
       ui | ui-mods ) install-ui-mods; configure-prompt set-auth-ui-mods; configure-prompt set-auth-logo; configure-prompt set-desktop-ui-mods; configure-prompt set-desktop-background; configure-prompt set-rubik-as-defaultfont; need_reboot=1 ;;
       ui-wc | ui-mods-without-config ) install-ui-mods ;;

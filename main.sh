@@ -404,26 +404,42 @@ function uninstall-remote-support {
 }
 
 function install-aad {
-  echo -e "\n= Installing packages for AAD DS integration =\n"
+  echo -e "\n= Installing Azure AD Login for Linux (aadlogin) =\n"
 
   sudo apt-get update -qy
-  sudo apt-get install -y realmd sssd libnss-sss libpam-sss adcli samba-common krb5-user packagekit
 
+  # Import Microsoft repo GPG key
+  curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+  # Add Azure CLI repo
+  sudo bash -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list'
+
+  # Add Azure AD Login repo
+  sudo bash -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/azureadlogin/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azureadlogin.list'
+
+  sudo apt-get update -qy
+
+  # Install azure-cli and aadlogin packages
+  sudo apt-get install -qy azure-cli aadlogin
+
+  # Enable automatic home directory creation on login
   sudo pam-auth-update --enable mkhomedir > /dev/null
+
+  # Configure aadlogin service and PAM
+  sudo systemctl enable aadlogin.service
+  sudo systemctl start aadlogin.service
+
+  echo "AAD login installed. Please configure /etc/aadlogin.conf with your Azure AD tenant info."
 }
 
 function uninstall-aad {
-  echo -e "\n= Uninstalling aad-auth package =\n"
+  echo -e "\n= Uninstalling Azure AD Login (aadlogin) =\n"
 
-  # Remove installed software
   sudo apt-get remove --purge -qy azure-cli aadlogin
   sudo apt-get autoremove -qy > /dev/null
 
-  # Purge dependencies
-  sudo apt-get autoremove -qy > /dev/null
-
-  # Remove AAD config
-  sudo rm /etc/sssd/sssd.conf &> /dev/null
+  # Optionally remove aadlogin config and PAM changes if needed
+  sudo rm -f /etc/aadlogin.conf
 }
 
 # Prints auth background path (internal-use)
@@ -799,37 +815,37 @@ function unset-rubik-as-defaultfont-settings {
   sudo dconf update > /dev/null
 }
 
-# # Prints AAD configuration path (internal-use)
-# function get-custom-aad-config {
-#   if [ -f '/opt/bluesparrow/ubuntutweaks/sssd.conf' ]
-#   then
-#     echo '/opt/bluesparrow/ubuntutweaks/sssd.conf'
-#   else
-#     echo "$(realpath ./sssd.conf)"
-#   fi
-# }
+# Prints AAD configuration path (internal-use)
+function get-custom-aad-config {
+  if [ -f '/opt/bluesparrow/ubuntutweaks/aadlogin.conf' ]
+  then
+    echo '/opt/bluesparrow/ubuntutweaks/aadlogin.conf'
+  else
+    echo "$(realpath ./aadlogin.conf)"
+  fi
+}
 
 function set-aad-settings {
-  echo -e "\n= Sets new Azure AD Domain Services settings =\n"
+  echo -e "\n= Setting new Azure AD login settings =\n"
 
-  sudo rm /etc/sssd/sssd.conf &> /dev/null
-  sudo cp $(get-custom-aad-config) /etc/sssd/sssd.conf &> /dev/null
-  sudo chown root:root /etc/sssd/sssd.conf
-  sudo chmod 600 /etc/sssd/sssd.conf
+  local AAD_CONF="/var/bluesparrow/ubuntutweaks/aadlogin.conf"
 
-  source "/var/bluesparrow/ubuntutweaks/aad-settings.conf"
-
-  # Join AAD DS domain
-  if ! realm list | grep -q "$REALM_NAME"; then
-    sudo realm join "$REALM_NAME" --user="$ADMIN_USER"
-  else
-    echo "Already joined to realm $REALM_NAME."
+  if [[ ! -f "$AAD_CONF" ]]; then
+    echo "ERROR: Project aadlogin.conf not found at $AAD_CONF"
+    return 1
   fi
 
-  sudo systemctl restart sssd
+  # Kopiuj plik konfiguracyjny do /etc/aadlogin.conf
+  sudo cp "$AAD_CONF" /etc/aadlogin.conf
 
-  sudo pam-auth-update --enable mkhomedir
+  # Ustaw właściciela i prawa dostępu
+  sudo chown root:root /etc/aadlogin.conf
+  sudo chmod 600 /etc/aadlogin.conf
 
+  # Restartuj usługę aadlogin, aby wczytać nową konfigurację
+  sudo systemctl restart aadlogin.service
+
+  # Twoja funkcja do autoryzacji (jeśli jest potrzebna)
   set-auth-nouserslist-settings
 
   need_reboot=1

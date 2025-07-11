@@ -404,37 +404,38 @@ function uninstall-remote-support {
 }
 
 function install-aad {
-  echo -e "\n= Instalacja Azure AD login =\n"
+  echo -e "\n== Install Azure AD login =="
 
-  sudo apt-get update -qy
+  sudo apt-get update -y
 
   if apt-cache show libpam-aad &> /dev/null; then
-    sudo apt-get install -qy libpam-aad libnss-aad
-    sudo pam-auth-update --enable mkhomedir
-
-    echo "Zainstalowano aad-auth (PAM/NSS). Skonfiguruj /etc/aad.conf z tenant_id/app_id/app_secret."
+    sudo apt-get install -y libpam-aad libnss-aad
   else
     curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-    sudo bash -c "echo 'deb [arch=amd64] https://packages.microsoft.com/repos/azureadlogin/ $(lsb_release -cs) main' > /etc/apt/sources.list.d/azureadlogin.list"
-    sudo apt-get update -qy
-    sudo apt-get install -qy aadsshlogin aadsshlogin-selinux
-
-    sudo pam-auth-update --enable mkhomedir
-    sudo systemctl enable aadsshlogin.service
-    sudo systemctl start aadsshlogin.service
-
-    echo "Zainstalowano aadsshlogin. Dodaj rozszerzenie AADSSHLoginForLinux w Azure."
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azureadlogin/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azureadlogin.list
+    sudo apt-get update -y
+    sudo apt-get install -y aadsshlogin aadsshlogin-selinux
+    sudo systemctl enable --now aadsshlogin.service
   fi
+
+  sudo pam-auth-update --enable mkhomedir > /dev/null
 }
 
 
-function uninstall-aad {
-  echo -e "\n= Odinstalowanie Azure AD login =\n"
 
-  sudo apt-get remove --purge -qy libpam-aad libnss-aad aadsshlogin aadsshlogin-selinux
-  sudo apt-get autoremove -qy
+function uninstall-aad {
+  echo -e "\n== Uninstall Azure AD =="
+
+  sudo apt-get remove --purge -y libpam-aad libnss-aad aadsshlogin aadsshlogin-selinux || true
+  sudo apt-get autoremove -y
 
   sudo rm -f /etc/aad.conf
+
+  if systemctl list-units --type=service | grep -q aadsshlogin; then
+    sudo systemctl stop aadsshlogin.service
+    sudo systemctl disable aadsshlogin.service
+  fi
+
 }
 
 
@@ -822,26 +823,27 @@ function unset-rubik-as-defaultfont-settings {
 # }
 
 function set-aad-settings {
-  echo -e "\n= Konfiguracja Azure AD login =\n"
+  echo -e "\n== Konfiguracja Azure AD =="
 
   local SRC_CONF
-  if [ -f '/opt/bluesparrow/ubuntutweaks/aad.conf' ]; then
+  if [[ -f '/opt/bluesparrow/ubuntutweaks/aad.conf' ]]; then
     SRC_CONF='/opt/bluesparrow/ubuntutweaks/aad.conf'
   else
     SRC_CONF="$(realpath ./aad.conf)"
   fi
 
   if [[ ! -f "$SRC_CONF" ]]; then
-    echo "ERROR: Nie znaleziono pliku konfiguracyjnego: $SRC_CONF"
-    return 1
+    exit 1
   fi
 
   sudo cp "$SRC_CONF" /etc/aad.conf
   sudo chown root:root /etc/aad.conf
   sudo chmod 600 /etc/aad.conf
-  sudo systemctl restart aadsshlogin.service
 
-  need_reboot=1
+
+  if systemctl list-unit-files | grep -q aadsshlogin; then
+    sudo systemctl restart aadsshlogin.service
+  fi
 }
 
 function unset-aad-settings {

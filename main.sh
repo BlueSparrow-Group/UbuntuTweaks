@@ -406,19 +406,12 @@ function uninstall-remote-support {
 function install-aad {
   echo -e "\n== Install Azure AD login =="
 
-  sudo apt-get update -y
+  sudo apt-get update -qy
+  sudo apt-get install -qy sssd libpam-sss libnss-sss
 
-  if apt-cache show libpam-aad &> /dev/null; then
-    sudo apt-get install -y libpam-aad libnss-aad
-  else
-    curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azureadlogin/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azureadlogin.list
-    sudo apt-get update -y
-    sudo apt-get install -y aadsshlogin aadsshlogin-selinux
-    sudo systemctl enable --now aadsshlogin.service
-  fi
-
+  # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
+  sudo systemctl restart sssd
 }
 
 
@@ -426,16 +419,11 @@ function install-aad {
 function uninstall-aad {
   echo -e "\n== Uninstall Azure AD =="
 
-  sudo apt-get remove --purge -y libpam-aad libnss-aad aadsshlogin aadsshlogin-selinux || true
-  sudo apt-get autoremove -y
+  sudo apt-get remove --purge -qy sssd libpam-sss libnss-sss
 
-  sudo rm -f /etc/aad.conf
+  sudo apt-get autoremove -qy > /dev/null
 
-  if systemctl list-units --type=service | grep -q aadsshlogin; then
-    sudo systemctl stop aadsshlogin.service
-    sudo systemctl disable aadsshlogin.service
-  fi
-
+  sudo rm -f /etc/sssd/sssd.conf
 }
 
 
@@ -812,49 +800,32 @@ function unset-rubik-as-defaultfont-settings {
   sudo dconf update > /dev/null
 }
 
-# # Prints AAD configuration path (internal-use)
-# function get-custom-aad-config {
-#   if [ -f '/opt/bluesparrow/ubuntutweaks/aad.conf' ]
-#   then
-#     echo '/opt/bluesparrow/ubuntutweaks/aad.conf'
-#   else
-#     echo "$(realpath ./aad.conf)"
-#   fi
-# }
+# Prints AAD configuration path (internal-use)
+function get-custom-aad-config {
+  if [ -f '/opt/bluesparrow/ubuntutweaks/sssd.conf' ]
+  then
+    echo '/opt/bluesparrow/ubuntutweaks/sssd.conf'
+  else
+    echo "$(realpath ./sssd.conf)"
+  fi
+}
 
 function set-aad-settings {
-  echo -e "\n== Konfiguracja Azure AD =="
+  echo -e "\n== Configure Azure AD =="
 
-  local SRC_CONF
-  if [[ -f '/opt/bluesparrow/ubuntutweaks/aad.conf' ]]; then
-    SRC_CONF='/opt/bluesparrow/ubuntutweaks/aad.conf'
-  else
-    SRC_CONF="$(realpath ./aad.conf)"
-  fi
+  sudo rm /etc/sssd/sssd.conf &> /dev/null
+  sudo cp $(get-custom-aad-config) /etc/sssd/sssd.conf &> /dev/null
+  sudo systemctl restart sssd
 
-  if [[ ! -f "$SRC_CONF" ]]; then
-    exit 1
-  fi
-
-  sudo cp "$SRC_CONF" /etc/aad.conf
-  sudo chown root:root /etc/aad.conf
-  sudo chmod 600 /etc/aad.conf
-
-
-  if systemctl list-unit-files | grep -q aadsshlogin; then
-    sudo systemctl restart aadsshlogin.service
-  fi
+  set-auth-nouserslist-settings
 }
 
 function unset-aad-settings {
   echo -e "\n= Reset Azure AD login =\n"
 
-  sudo rm -f /etc/aad.conf
-
-  if systemctl list-units --type=service | grep -q aadsshlogin; then
-    sudo systemctl stop aadsshlogin.service
-    sudo systemctl disable aadsshlogin.service
-  fi
+  sudo rm -f /etc/sssd/sssd.conf
+  
+  unset-auth-nouserslist-settings
 
   need_reboot=1
 }

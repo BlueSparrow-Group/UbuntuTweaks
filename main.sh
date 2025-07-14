@@ -815,6 +815,8 @@ function set-aad-settings {
 
   sudo rm /etc/sssd/sssd.conf &> /dev/null
   sudo cp $(get-custom-aad-config) /etc/sssd/sssd.conf &> /dev/null
+  sudo chown root:root /etc/sssd/sssd.conf
+  sudo chmod 600 /etc/sssd/sssd.conf
   sudo systemctl restart sssd
 
   set-auth-nouserslist-settings

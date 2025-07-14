@@ -13,12 +13,13 @@ DEBIAN_FRONTEND=noninteractive
 
 function install-general-software {
   echo -e "\n= Installing common general-use dependencies =\n"
-  sudo apt update
-  sudo apt install -qy software-properties-common flatpak universe main restricted multiverse &>/dev/null
-  sudo apt update
-  hash -r
 
   # Install software and libs from ubuntu repositories
+  sudo apt update
+  sudo apt-get install -qy software-properties-common flatpak universe main restricted multiverse &>/dev/null
+  sudo apt update
+  hash -r
+  
   sudo apt-get install -qy make cmake dconf-cli gettext ca-certificates curl gnupg software-properties-common apt-transport-https unzip git snapd openjdk-17-jre openjdk-17-jre libfuse2 mc dconf-cli dconf-editor python3 pipx gnome-software gnome-software-plugin-snap flatpak gnome-software-plugin-flatpak libspeechd-dev libfuse2 golang gcc pkg-config libwebkit2gtk-4.1-dev libjson-glib-dev > /dev/null
 
   # Add flatpak repository
@@ -407,11 +408,13 @@ function install-aad {
   echo -e "\n== Install Azure AD login =="
 
   sudo apt-get update -qy
-  sudo apt-get install -qy sssd libpam-sss libnss-sss
+  # Install sssd, realmd, adcli, samba-common-bin, and krb5-user for AD integration
+  sudo apt-get install -qy sssd sssd-tools libpam-sss libnss-sss realmd adcli samba-common-bin krb5-user
 
-  # Enable automatic home creation for AAD users
+  # Enable automatic home directory creation for domain users upon first login
+  echo -e "\n== Enabling automatic home directory creation =="
   sudo pam-auth-update --enable mkhomedir > /dev/null
-  sudo systemctl restart sssd
+
 }
 
 
@@ -819,7 +822,15 @@ function set-aad-settings {
   sudo chmod 600 /etc/sssd/sssd.conf
   sudo systemctl restart sssd
 
+  sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  sudo systemctl restart sshd
+
+  source /var/bluesparrow/ubuntutweaks/aad.conf
+  sudo realm join --verbose "${AADDS_DOMAIN}" -U "${AADDS_ADMIN_USER}" --install
+
   set-auth-nouserslist-settings
+
+  no_reboot=1
 }
 
 function unset-aad-settings {

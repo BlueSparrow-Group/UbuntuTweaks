@@ -241,9 +241,7 @@ function install-programming-software {
 
   # Install Docker
   sudo apt-get install -qy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
-
-  # Remove old versions of Julia
-  rm -rf ~/.julia ~/.juliaup
+  
 
   # Install Julia
   curl -fsSL https://install.julialang.org | bash -s -- -y > /dev/null 2>&1
@@ -266,7 +264,7 @@ function install-programming-software {
   sudo /bin/bash -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list' &>/dev/null
 
  # Add Microsoft repository for dotnet
-  wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+  sudo wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
   sudo dpkg -i packages-microsoft-prod.deb
   sudo rm packages-microsoft-prod.deb
 
@@ -298,7 +296,6 @@ function uninstall-programming-software {
   sudo rm -f /etc/apt/sources.list.d/mono-official-stable.list
 
   # Remove Julia
-  juliaup self uninstall &> /dev/null || echo "Julia not found"
   rm -rf ~/.julia ~/.juliaup
 
   # Remove installed software

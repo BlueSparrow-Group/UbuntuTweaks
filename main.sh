@@ -16,7 +16,7 @@ function install-general-software {
 
   # Install software and libs from ubuntu repositories
   sudo apt update
-  sudo apt-get install -qy software-properties-common flatpak universe main restricted multiverse &>/dev/null
+  sudo apt-get install -qy software-properties-common flatpak universe main restricted multiverse >/dev/null
   sudo apt update
   hash -r
   
@@ -409,7 +409,7 @@ function install-aad {
 
   sudo apt-get update -qy
   # Install sssd, realmd, adcli, samba-common-bin, and krb5-user for AD integration
-  sudo apt-get install -qy sssd sssd-tools libpam-sss libnss-sss realmd adcli samba-common-bin krb5-user
+  sudo apt-get install -qy sssd sssd-tools libpam-sss libnss-sss realmd adcli samba-common-bin krb5-user > /dev/null
 
   # Enable automatic home directory creation for domain users upon first login
   echo -e "\n== Enabling automatic home directory creation =="
@@ -422,7 +422,7 @@ function install-aad {
 function uninstall-aad {
   echo -e "\n== Uninstall Azure AD =="
 
-  sudo apt-get remove --purge -qy sssd libpam-sss libnss-sss
+  sudo apt-get remove --purge -qy sssd libpam-sss libnss-sss > /dev/null
 
   sudo apt-get autoremove -qy > /dev/null
 
@@ -826,7 +826,7 @@ function set-aad-settings {
   sudo systemctl restart sshd
 
   source /var/bluesparrow/ubuntutweaks/aad.conf
-  sudo realm join --verbose "${AADDS_DOMAIN}" -U "${AADDS_ADMIN_USER}" --install
+  sudo realm join --verbose "${AADDS_DOMAIN}" -U "${AADDS_ADMIN_USER}" --install=/
 
   set-auth-nouserslist-settings
 

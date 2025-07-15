@@ -402,30 +402,35 @@ function uninstall-remote-support {
 }
 
 function install-aad {
-  echo -e "\n== Install Azure AD login =="
+  echo -e "\n= Installing aad-auth package =\n"
 
-  sudo apt-get update -qy
-  # Install sssd, realmd, adcli, samba-common-bin, and krb5-user for AD integration
-  sudo apt-get install -qy sssd sssd-tools libpam-sss libnss-sss realmd adcli samba-common-bin krb5-user > /dev/null
+  # Install software and libs from ubuntu repositories
+  sudo add-apt-repository ppa:ubuntu-enterprise-desktop/authd
+  sudo apt update
+  sudo apt-get install authd gnome-shell yaru-theme-gnome-shell
+  
+  # Install brokers
+  sudo snap install authd-msentraid
 
-  # Enable automatic home directory creation for domain users upon first login
-  echo -e "\n== Enabling automatic home directory creation =="
+  # Enable automatic home creation for AAD users
   sudo pam-auth-update --enable mkhomedir > /dev/null
-
 }
-
-
 
 function uninstall-aad {
-  echo -e "\n== Uninstall Azure AD =="
+  echo -e "\n= Uninstalling aad-auth package =\n"
 
-  sudo apt-get remove --purge -qy sssd libpam-sss libnss-sss > /dev/null
+  sudo apt-get remove --purge -y authd gnome-shell yaru-theme-gnome-shell &> /dev/null
+  sudo snap remove authd-msentraid &> /dev/null
+  sudo add-apt-repository --remove -y ppa:ubuntu-enterprise-desktop/authd &> /dev/null
 
-  sudo apt-get autoremove -qy > /dev/null
+  sudo apt update
 
-  sudo rm -f /etc/sssd/sssd.conf
+  sudo pam-auth-update --disable mkhomedir > /dev/null
+
+  sudo apt-get autoremove -y
+  sudo apt-get clean
+
 }
-
 
 # Prints auth background path (internal-use)
 function get-custom-auth-background {
@@ -800,41 +805,43 @@ function unset-rubik-as-defaultfont-settings {
   sudo dconf update > /dev/null
 }
 
-# Prints AAD configuration path (internal-use)
 function get-custom-aad-config {
-  if [ -f '/opt/bluesparrow/ubuntutweaks/sssd.conf' ]
+  if [ -f '/opt/bluesparrow/ubuntutweaks/broker.conf' ]
   then
-    echo '/opt/bluesparrow/ubuntutweaks/sssd.conf'
+    echo '/opt/bluesparrow/ubuntutweaks/broker.conf'
   else
-    echo "$(realpath ./sssd.conf)"
+    echo "$(realpath ./broker.conf)"
   fi
 }
 
 function set-aad-settings {
-  echo -e "\n== Configure Azure AD =="
+  echo -e "\n= Sets new Azure Active Directory settings =\n"
 
-  sudo rm /etc/sssd/sssd.conf &> /dev/null
-  sudo cp $(get-custom-aad-config) /etc/sssd/sssd.conf &> /dev/null
-  sudo chown root:root /etc/sssd/sssd.conf
-  sudo chmod 600 /etc/sssd/sssd.conf
-  sudo systemctl restart sssd
+  # Change authd settings via upload new file
+  sudo rm /etc/authd/brokers.d/ &> /dev/null
+  sudo mkdir -p /etc/authd/brokers.d/
+  sudo cp /snap/authd-msentraid/current/conf/authd/msentraid.conf /etc/authd/brokers.d &> /dev/null
+  sudo cp $(get-custom-aad-config) /var/snap/authd-msentraid/current/broker.conf &> /dev/null
 
-  sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-  sudo systemctl restart sshd
-
-  source /var/bluesparrow/ubuntutweaks/aad.conf
-  sudo realm join --verbose "${AADDS_DOMAIN}" -U "${AADDS_ADMIN_USER}" --install=/
+  # Broker update and restart
+  sudo systemctl restart authd
+  sudo snap restart authd-msentraid
 
   set-auth-nouserslist-settings
 
-  no_reboot=1
+  need_reboot=1
 }
 
 function unset-aad-settings {
-  echo -e "\n= Reset Azure AD login =\n"
+  echo -e "\n= Unsets Azure Active Directory settings =\n"
 
-  sudo rm -f /etc/sssd/sssd.conf
-  
+  sudo rm -rf /etc/authd/brokers.d/ &> /dev/null
+  sudo rm /var/snap/authd-msentraid/current/broker.conf &> /dev/null
+  sudo rm /etc/aad.conf &> /dev/null
+
+  sudo systemctl restart authd
+  sudo snap restart authd-msentraid
+
   unset-auth-nouserslist-settings
 
   need_reboot=1

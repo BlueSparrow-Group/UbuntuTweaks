@@ -407,7 +407,7 @@ function install-aad {
   # Install software and libs from ubuntu repositories
   sudo add-apt-repository ppa:ubuntu-enterprise-desktop/authd
   sudo apt update
-  sudo apt-get install authd gnome-shell yaru-theme-gnome-shell
+  sudo apt-get install authd gnome-shell yaru-theme-gnome-shell 
   
   # Install brokers
   sudo snap install authd-msentraid
@@ -806,9 +806,9 @@ function unset-rubik-as-defaultfont-settings {
 }
 
 function get-custom-aad-config {
-  if [ -f '/opt/bluesparrow/ubuntutweaks/broker.conf' ]
+  if [ -f '/var/bluesparrow/ubuntutweaks/broker.conf' ]
   then
-    echo '/opt/bluesparrow/ubuntutweaks/broker.conf'
+    echo '/var/bluesparrow/ubuntutweaks/broker.conf'
   else
     echo "$(realpath ./broker.conf)"
   fi
@@ -821,7 +821,7 @@ function set-aad-settings {
   sudo rm /etc/authd/brokers.d/ &> /dev/null
   sudo mkdir -p /etc/authd/brokers.d/
   sudo cp /snap/authd-msentraid/current/conf/authd/msentraid.conf /etc/authd/brokers.d &> /dev/null
-  sudo cp $(get-custom-aad-config) /var/snap/authd-msentraid/current/broker.conf &> /dev/null
+  sudo cp "$(get-custom-aad-config)" /var/snap/authd-msentraid/current/broker.conf &> /dev/null
 
   # Broker update and restart
   sudo systemctl restart authd
@@ -837,7 +837,6 @@ function unset-aad-settings {
 
   sudo rm -rf /etc/authd/brokers.d/ &> /dev/null
   sudo rm /var/snap/authd-msentraid/current/broker.conf &> /dev/null
-  sudo rm /etc/aad.conf &> /dev/null
 
   sudo systemctl restart authd
   sudo snap restart authd-msentraid

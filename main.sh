@@ -404,12 +404,14 @@ function uninstall-remote-support {
 function install-aad {
   echo -e "\n= Installing aad-auth package =\n"
 
-  # Install software and libs from ubuntu repositories
+  # Get authd repository
   sudo add-apt-repository ppa:ubuntu-enterprise-desktop/authd
   sudo apt update
+
+  # Install authd and gnome
   sudo apt-get install authd gnome-shell yaru-theme-gnome-shell 
   
-  # Install brokers
+  # Install Entra ID broker
   sudo snap install authd-msentraid
 
   # Enable automatic home creation for AAD users
@@ -419,17 +421,18 @@ function install-aad {
 function uninstall-aad {
   echo -e "\n= Uninstalling aad-auth package =\n"
 
+  # Remove authd and gnome
   sudo apt-get remove --purge -y authd gnome-shell yaru-theme-gnome-shell &> /dev/null
   sudo snap remove authd-msentraid &> /dev/null
-  sudo add-apt-repository --remove -y ppa:ubuntu-enterprise-desktop/authd &> /dev/null
 
+  # Remove authd repository
+  sudo add-apt-repository --remove -y ppa:ubuntu-enterprise-desktop/authd &> /dev/null
   sudo apt update
 
+  # Disable automatic home creation for AAD users
   sudo pam-auth-update --disable mkhomedir > /dev/null
-
   sudo apt-get autoremove -y
   sudo apt-get clean
-
 }
 
 # Prints auth background path (internal-use)
@@ -817,10 +820,12 @@ function get-custom-aad-config {
 function set-aad-settings {
   echo -e "\n= Sets new Azure Active Directory settings =\n"
 
-  # Change authd settings via upload new file
+  # Change authentication brokers via upload new file for Entra ID
   sudo rm /etc/authd/brokers.d/ &> /dev/null
   sudo mkdir -p /etc/authd/brokers.d/
   sudo cp /snap/authd-msentraid/current/conf/authd/msentraid.conf /etc/authd/brokers.d &> /dev/null
+
+  # Config custom broker settings
   sudo cp "$(get-custom-aad-config)" /var/snap/authd-msentraid/current/broker.conf &> /dev/null
 
   # Broker update and restart
@@ -835,9 +840,11 @@ function set-aad-settings {
 function unset-aad-settings {
   echo -e "\n= Unsets Azure Active Directory settings =\n"
 
+  # Remove custom broker config
   sudo rm -rf /etc/authd/brokers.d/ &> /dev/null
   sudo rm /var/snap/authd-msentraid/current/broker.conf &> /dev/null
 
+  # authd restart 
   sudo systemctl restart authd
   sudo snap restart authd-msentraid
 
